@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Cusomer Dashboard</title>
+    <link rel="stylesheet" href="customerStyle.css" />
+  </head>
+  <body>
+    <div class="content" data-user-id="">
+      <nav class="navbar">
+        <div class="navbar__username">Username</div>
+        <div class="navbar__logo"><span>E</span>-Commerce</div>
+        <div class="navbar__list">
+          <ul>
+            <li>
+              <a href="" class="navbar__list-item profile">Profile</a>
+            </li>
+            <li>
+              <a href="#cart" class="navbar__list-item cart"
+                >Cart <span class="cartSpan"></span
+              ></a>
+            </li>
+            <li>
+              <a href="#logout" class="navbar__list-item logout">Logout</a>
+            </li>
+          </ul>
+        </div>
+      </nav>
+      <div class="categories" id="categories"></div>
+      <div class="products"></div>
+    </div>
+    <div class="sidePage hidden" id="sidePage">
+      <h2 class="cartSection">Cart</h2>
+      <div class="close-button" onclick="closeCart()"></div>
+
+      <div class="emptyCartMessage">No products added to cart</div>
+    </div>
+    <div class="overlay hidden"></div>
+    <script defer src="customerScript.js"></script>
+  </body>
+</html>

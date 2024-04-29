@@ -1,0 +1,147 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Admin Dashboard</title>
+    <link rel="stylesheet" href="adminStyle.css" />
+  </head>
+  <body>
+    <div class="content" data-user-id="">
+      <nav class="navbar">
+        <div class="navbar__username">Admin Username</div>
+        <div class="navbar__logo"><span>E</span>-Commerce</div>
+        <div class="navbar__list">
+          <ul>
+            <li>
+              <a href="" class="navbar__list-item home">Home</a>
+            </li>
+            <li>
+              <a href="" class="navbar__list-item summary">Summary</a>
+            </li>
+            <li>
+              <a href="" class="navbar__list-item logout">Logout</a>
+            </li>
+          </ul>
+        </div>
+      </nav>
+
+      <div class="categoryTable">
+        <table class="categories">
+          <thead>
+            <tr>
+              <th></th>
+              <th></th>
+              <th>Category</th>
+              <th class="addbtnOperation">
+                <div>Operation</div>
+                <div><button id="addRowBtn" class="addRowBtn">+</button></div>
+              </th>
+            </tr>
+          </thead>
+          <tbody class="tableBody"></tbody>
+        </table>
+      </div>
+
+      <div class="productDetails hidden"></div>
+    </div>
+
+    <div id="addProductForm" class="addProductForm hidden">
+      <h2 class="heading">Add Product</h2>
+      <div class="close-button" onclick="closeForm()"></div>
+      <form id="productForm" class="productForm">
+        <label for="productName">Name:</label>
+        <input type="text" id="productName" name="productName" required />
+
+        <label for="sectionId">Category id:</label>
+        <input
+          type="text"
+          id="sectionId"
+          name="sectionId"
+          style="background-color: #dfdfdf"
+          readonly
+        />
+
+        <label for="manufactureDate">Manufacture Date:</label>
+        <input type="date" id="manufactureDate" name="manufactureDate" />
+
+        <label for="expiryDate">Expiry Date:</label>
+        <input type="date" id="expiryDate" name="expiryDate" />
+
+        <label for="rate">Rate:</label>
+        <input type="number" id="rate" name="rate" step="0.01" required />
+
+        <label for="image">Image:</label>
+        <input type="text" id="image" name="image" mandatory />
+
+        <div class="addProductForm__buttons">
+          <button class="addProductForm__addBtn">Add</button>
+          <button class="addProductForm__cancelBtn" type="Button">
+            Cancel
+          </button>
+        </div>
+      </form>
+    </div>
+
+    <div id="addCategoryForm" class="addCategoryForm hidden">
+      <h2 class="heading"></h2>
+      <div class="close-button" onclick="closeForm()"></div>
+      <form id="categoryForm" class="categoryForm">
+        <label for="categoryName">Name:</label>
+        <input type="text" id="categoryName" name="categoryName" required />
+
+        <label for="image">Image:</label>
+        <input type="text" id="categoryImage" name="categoryImage" mandatory />
+
+        <div class="addCategoryForm__buttons">
+          <button class="addCategoryForm__addBtn">Add</button>
+          <button class="addCategoryForm__cancelBtn" type="button">
+            Cancel
+          </button>
+        </div>
+      </form>
+    </div>
+
+    <div id="editProductDetailForm" class="editProductDetailForm hidden">
+      <h2 class="editProduct__heading heading">Edit</h2>
+      <div class="close-button" onclick="closeForm()"></div>
+      <form id="editProductForm" class="editProductForm">
+        <label for="editProductName">Name:</label>
+        <input type="text" id="editProductName" name="editProductName" />
+
+        <label for="editSectionId">Category id:</label>
+        <input
+          type="text"
+          id="editSectionId"
+          name="editSectionId"
+          style="background-color: #dfdfdf"
+          readonly
+        />
+
+        <label for="editManufactureDate">Manufacture Date:</label>
+        <input
+          type="date"
+          id="editManufactureDate"
+          name="editManufactureDate"
+        />
+
+        <label for="editExpiryDate">Expiry Date:</label>
+        <input type="date" id="editExpiryDate" name="editExpiryDate" />
+
+        <label for="editRate">Rate:</label>
+        <input type="text" id="editRate" name="editRate" />
+
+        <label for="editImage">Image:</label>
+        <input type="text" id="editImage" name="editImage" />
+
+        <div class="editProductDetailForm__buttons">
+          <button class="editProductDetailForm__saveBtn">Save</button>
+          <button class="editProductDetailForm__cancelBtn">Cancel</button>
+        </div>
+      </form>
+    </div>
+
+    <div class="overlay hidden"></div>
+    <script defer src="adminScript.js"></script>
+  </body>
+</html>

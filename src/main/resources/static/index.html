@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Grocery Delivery Page</title>
+    <link rel="stylesheet" href="style.css" />
+  </head>
+  <body>
+    <div class="content">
+      <nav class="navbar">
+        <div class="navbar__logo"><span>E</span>-Commerce</div>
+        <div class="navbar__list">
+          <ul>
+            <li><a href="/users" class="navbar__list-item">Home</a></li>
+            <li><a href="#about" class="navbar__list-item">About</a></li>
+            <li><a href="#services" class="navbar__list-item">Services</a></li>
+            <li><a href="#contact" class="navbar__list-item">Contact</a></li>
+          </ul>
+        </div>
+        <div class="navbar__login">
+          <button class="loggingBtn">
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              viewBox="0 0 24 24"
+              id="logout"
+              fill="white"
+              height="26px"
+              width="26px"
+            >
+              <path
+                d="M12.59,13l-2.3,2.29a1,1,0,0,0,0,1.42,1,1,0,0,0,1.42,0l4-4a1,1,0,0,0,.21-.33,1,1,0,0,0,0-.76,1,1,0,0,0-.21-.33l-4-4a1,1,0,1,0-1.42,1.42L12.59,11H3a1,1,0,0,0,0,2ZM12,2A10,10,0,0,0,3,7.55a1,1,0,0,0,1.8.9A8,8,0,1,1,12,20a7.93,7.93,0,0,1-7.16-4.45,1,1,0,0,0-1.8.9A10,10,0,1,0,12,2Z"
+              ></path>
+            </svg>
+          </button>
+        </div>
+      </nav>
+
+      <div class="details">
+        <p class="details__para"></p>
+        <button class="details__btn btn">Learn more</button>
+      </div>
+    </div>
+
+    <div class="login-container hidden">
+      <h2 class="formHeading"></h2>
+      <form id="loginForm" class="loginForm" method="POST">
+        <label for="userType" class="loginForm__formLabel">User Type:</label>
+        <select id="userType" name="userType" onchange="changeHeading()">
+          <option value="select" selected>Select</option>
+          <option value="admin">Admin</option>
+          <option value="customer">Customer</option>
+        </select>
+
+        <label for="username" class="loginForm__formLabel">Username:</label>
+        <input
+          type="text"
+          id="username"
+          name="username"
+          placeholder="Username"
+          class="loginForm__formInput"
+          required
+        />
+
+        <label for="password" class="loginForm__formLabel">Password:</label>
+        <input
+          type="password"
+          id="password"
+          name="password"
+          placeholder="password"
+          class="loginForm__formInput"
+          required
+        />
+
+        <div class="buttons">
+          <button type="button" class="loginBtn">Login</button>
+          <button type="button" class="registerBtn">Register</button>
+        </div>
+      </form>
+      <div class="close-button"></div>
+    </div>
+
+    <div class="overlay hidden"></div>
+  </body>
+  <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+  <script src="script.js"></script>
+</html>
