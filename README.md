@@ -1,6 +1,32 @@
 **E-Commerce Project**
 
-This is a simple E-Commerce project built with Spring Boot and MySQL. It provides basic functionalities such as managing products, sections, and user details.
+**Overview**
+
+This project is an e-commerce platform developed using Spring Boot and Java. It provides functionalities for managing products, user accounts, and user details. The application allows users to browse through different product categories, add products to their cart, and place orders. Users can also update their profile information such as full name, email, address, and background color.
+
+**Features**
+
+Product Management:
+Administrators can manage product categories and add/update product details such as name, price, and availability.
+
+User Management:
+Users can create accounts, log in, and update their profile information.
+
+Order Management: 
+Users can add products to their cart and place orders.
+
+Profile Customization: 
+Users can customize their profile by setting a background color.
+
+**Technologies Used**
+
+Java, 
+Spring Boot, 
+Maven, 
+Hibernate (JPA), 
+MySQL (Database), 
+HTML/CSS, 
+JavaScript
 
 **Database Setup**
 
