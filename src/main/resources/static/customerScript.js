@@ -1,14 +1,43 @@
-document.querySelector('.logout').addEventListener('click', function () {
-  console.log('logout  button clicked');
-  if (confirm('Are you sure you want to logout?')) {
+const userId = localStorage.getItem('userId');
+const body = document.querySelector('body');
+body.dataset.userId = userId;
+
+var username = localStorage.getItem('username');
+document.querySelector('.profileImage').textContent = username
+  .substring(0, 1)
+  .toUpperCase();
+document.getElementById('username').value = username;
+
+document.addEventListener('DOMContentLoaded', function () {
+  var userId = localStorage.getItem('userId');
+  if (!userId) {
     window.location.href = '/';
+  } else {
+    body.dataset.userId = userId;
+    fetchCategories();
+    fetchProducts();
+    updateCartUI();
+    fetchUserDetails(userId);
   }
 });
 
 document.querySelector('.profile').addEventListener('click', function () {
-  console.log('profile button clicked');
+  const overlay = document.querySelector('.overlay');
+  overlay.classList.remove('hidden');
+  const profilePage = document.querySelector('.profilePage');
+  profilePage.classList.remove('hidden');
 });
 
+document.querySelector('.logout').addEventListener('click', function () {
+  if (confirm('Are you sure you want to logout?')) {
+    window.addEventListener('beforeunload', function (e) {
+      localStorage.clear();
+    });
+    window.location.href = '/';
+  }
+});
+
+// to fetch all categories
 function fetchCategories() {
   fetch('/categories')
     .then((response) => response.json())
@@ -31,231 +60,12 @@ function fetchCategories() {
         .join('');
       categoriesDiv.innerHTML += categoriesHTML;
 
-      fetchProductByCategory();
+      const categoryHeading = document.querySelector('.categoryHeading');
+      categoryHeading.addEventListener('click', function () {
+        fetchProducts();
+      });
     })
-    .catch((err) => console.log(err));
-}
-document.addEventListener('DOMContentLoaded', fetchCategories);
-
-function fetchProducts() {
-  fetch('/products')
-    .then((response) => response.json())
-    .then((data) => {
-      const productsDiv = document.querySelector('.products');
-      const productsHTML = data
-        .map(
-          (product) => `<div class="product__container">
-        <div class="product__image">
-          <img src="${product.image}"/>
-        </div>
-        <div class="product__details">
-          <div class="product_name">${product.name}</div>
-          <div class="product_quantity">1 Kg</div>
-          <div class="productAndBtn">
-            <div class="product_rate">&#8377 ${product.rate}</div>
-            <div class="addbtn btn"><button>Add</button></div>
-          </div>
-        </div>
-      </div>`
-        )
-        .join('');
-
-      productsDiv.innerHTML = `<h2 class="products__heading">Products</h2>
-        <div class="product__list">${productsHTML}</div>`;
-      // productsDiv.innerHTML += productsHTML;
-    })
-    .catch((err) => console.log(err));
-}
-document.addEventListener('DOMContentLoaded', fetchProducts);
-
-async function fetchProductByCategory(sectionId) {
-  try {
-    let url = `/products`;
-    if (sectionId) {
-      url = `/products/${sectionId}`;
-    }
-
-    const response = await fetch(url);
-    const data = await response.json();
-
-    const productsDiv = document.querySelector('.products');
-    const productsHTML = data
-      .map(
-        (
-          product
-        ) => `<div class="product__container" data_product_id="${product.productId}">
-          <div class="product__image">
-            <img src="${product.image}"/>
-          </div>
-          <div class="product__details">
-            <div class="product_name">${product.name}</div>
-            <div class="product_quantity">1 Kg</div>
-            <div class="productAndBtn">
-              <div class="product_rate">&#8377 ${product.rate}</div>
-              <div class="addbtn btn"><button class="productBtn">Add</button></div>
-            </div>
-          </div>
-        </div>`
-      )
-      .join('');
-
-    let sectionName = 'Products'; // Default value
-    if (sectionId) {
-      sectionName = await fetchSectionName(sectionId);
-    }
-
-    productsDiv.innerHTML = `<h2 class="products__heading">${sectionName}</h2>
-      <div class="product__list">${productsHTML}</div>`;
-  } catch (err) {
-    console.error(err);
-  }
-}
-
-// Event delegation for handling click events on category items
-document.querySelector('.categories').addEventListener('click', (event) => {
-  const categoryItem = event.target.closest('.category__item');
-  if (categoryItem) {
-    const categoryId = categoryItem.dataset.categoryId;
-    fetchProductByCategory(categoryId);
-  }
-});
-
-// fetch section name using sectionId
-async function fetchSectionName(sectionId) {
-  try {
-    const response = await fetch(`/categories/${sectionId}`);
-    const data = await response.text();
-    return data;
-  } catch (err) {
-    return 'Products';
-  }
-}
-
-function decrementCount(displayCount, productId) {
-  let count = parseInt(displayCount.textContent);
-  const parent = displayCount.parentElement;
-  if (parent.classList.contains('sidePageButton')) {
-    if (count > 1) {
-      count--;
-      displayCount.textContent = count;
-
-      const productPageCount = fetchDisplayCountForCart(productId);
-
-      const productContainers = document.querySelectorAll(
-        '.product__container'
-      );
-      productContainers.forEach((productContainer) => {
-        const containerProductId =
-          productContainer.getAttribute('data_product_id');
-        if (parseInt(containerProductId) === productId) {
-          const container = productContainer.querySelector('.countDisplay');
-          container.textContent = parseInt(productPageCount);
-        }
-      });
-      updateDataToCart(1, productId, count);
-    } else {
-      const parentContainer = parent.parentElement;
-
-      parentContainer.remove();
-
-      const productContainers = document.querySelectorAll(
-        '.product__container'
-      );
-      productContainers.forEach((productContainer) => {
-        const containerProductId =
-          productContainer.getAttribute('data_product_id');
-        if (parseInt(containerProductId) === productId) {
-          const displayCount = productContainer.querySelector('.countDisplay');
-          const countDiv = displayCount.parentElement;
-          const productAndBtn = countDiv.parentElement;
-          const addBtnContainer = document.createElement('div');
-          addBtnContainer.classList.add('addbtn', 'btn');
-          const addBtn = document.createElement('button');
-          addBtn.classList.add('productBtn');
-          addBtn.textContent = 'Add';
-          addBtnContainer.appendChild(addBtn);
-          countDiv.replaceWith(addBtnContainer);
-        }
-      });
-      countCartItem();
-      deleteDataFromCart(1, productId);
-    }
-  } else {
-    if (count > 1) {
-      count--;
-      displayCount.textContent = count;
-
-      const sidePageCount = fetchDisplayCount(productId);
-      const cartContainers = document.querySelectorAll('.sidePageContainer');
-      cartContainers.forEach((cartContainer) => {
-        const containerProductId =
-          cartContainer.getAttribute('data_product_id');
-
-        if (containerProductId === productId) {
-          const container = cartContainer.querySelector('.sidePageCount');
-          container.textContent = parseInt(sidePageCount);
-        }
-      });
-
-      updateDataToCart(1, productId, count);
-    } else {
-      const countDiv = displayCount.parentElement;
-      const productAndBtn = countDiv.parentElement;
-      const addBtnContainer = document.createElement('div');
-      addBtnContainer.classList.add('addbtn', 'btn');
-      const addBtn = document.createElement('button');
-      addBtn.classList.add('productBtn');
-      addBtn.textContent = 'Add';
-      // addBtn.addEventListener('click', replaceWithCountDiv);
-      addBtnContainer.appendChild(addBtn);
-      countDiv.replaceWith(addBtnContainer);
-
-      const cartContainers = document.querySelectorAll('.sidePageContainer');
-      cartContainers.forEach((cartContainer) => {
-        const containerProductId =
-          cartContainer.getAttribute('data_product_id');
-        if (containerProductId === productId) {
-          const container = cartContainer.querySelector('.sidePageCount');
-          cartContainer.remove();
-        }
-      });
-      deleteDataFromCart(1, productId);
-      countCartItem();
-    }
-  }
-}
-
-function incrementCount(displayCount, productId) {
-  const parent = displayCount.parentElement;
-  let count = parseInt(displayCount.textContent);
-  count++;
-  if (parent.classList.contains('sidePageButton')) {
-    displayCount.textContent = count;
-    const productPageCount = fetchDisplayCountForCart(productId);
-    const productContainers = document.querySelectorAll('.product__container');
-    productContainers.forEach((productContainer) => {
-      const containerProductId =
-        productContainer.getAttribute('data_product_id');
-      if (parseInt(containerProductId) === productId) {
-        const container = productContainer.querySelector('.countDisplay');
-        container.textContent = parseInt(productPageCount);
-      }
-    });
-  } else {
-    displayCount.textContent = count;
-    const sidePageCount = fetchDisplayCount(productId);
-
-    const cartContainers = document.querySelectorAll('.sidePageContainer');
-    cartContainers.forEach((cartContainer) => {
-      const containerProductId = cartContainer.getAttribute('data_product_id');
-
-      if (containerProductId === productId) {
-        const container = cartContainer.querySelector('.sidePageCount');
-        container.textContent = parseInt(sidePageCount);
-      }
-    });
-  }
-  updateDataToCart(1, productId, count);
+    .catch((err) => console.error(err));
 }
 
 document.addEventListener('click', function (e) {
@@ -264,7 +74,7 @@ document.addEventListener('click', function (e) {
     const productAndButton = addBtnContainer.parentElement;
     const productDetails = productAndButton.parentElement;
     const productContainer = productDetails.parentElement;
-    const productId = productContainer.getAttribute('data_product_id');
+    const productId = productContainer.dataset.productId;
 
     const countDiv = document.createElement('div');
     countDiv.classList.add('countDiv');
@@ -272,16 +82,10 @@ document.addEventListener('click', function (e) {
     const minusBtn = document.createElement('button');
     minusBtn.textContent = '-';
     minusBtn.classList.add('minusBtn');
-    minusBtn.addEventListener('click', function () {
-      decrementCount(countDisplay, productId);
-    });
 
     const plusBtn = document.createElement('button');
     plusBtn.textContent = '+';
     plusBtn.classList.add('plusBtn');
-    plusBtn.addEventListener('click', function () {
-      incrementCount(countDisplay, productId);
-    });
 
     const countDisplay = document.createElement('div');
     countDisplay.textContent = '1';
@@ -292,184 +96,439 @@ document.addEventListener('click', function (e) {
     countDiv.appendChild(plusBtn);
 
     addBtnContainer.replaceWith(countDiv);
-
-    addToCart(productContainer);
+    addToDbCart(userId, productId);
+    // fetchCartDetails(userId);
   }
 });
 
-function addToCart(productContainer) {
-  // Get the values from the productContainer
-  const productName =
-    productContainer.querySelector('.product_name').textContent;
-  const productQuantity =
-    productContainer.querySelector('.product_quantity').textContent;
-  const productRate =
-    productContainer.querySelector('.product_rate').textContent;
-  const productImage = productContainer.querySelector(
-    '.product__image img'
-  ).src;
-  const count = productContainer.querySelector('.countDisplay').textContent;
-  const productId = productContainer.getAttribute('data_product_id');
-
-  // Create the innerHTML string with the dynamic values
-  const innerHTML = `
-    <div class="sidePageContainer" data_product_id="${productId}">
-      <div class="sidePageContainer__image">
-        <img src="${productImage}" alt="${productName}" />
-      </div>
-      <div class="sidePageDetails">
-        <div class="sidePageDetails_name">${productName}</div>
-        <div class="sidePageDetails_quantity">${productQuantity}</div>
-      </div>
-      <div class="countDiv sidePageButton"><button class="minusBtn" onClick="decrementCount(this.nextElementSibling,${productId})">-</button><div class="countDisplay sidePageCount">${count}</div><button class="plusBtn" onClick="incrementCount(this.previousElementSibling,${productId})">+</button></div>
-      <div class="sidePageDetails_price">${productRate}</div>
-    </div>`;
-
-  const sidePage = document.querySelector('.sidePage');
-  sidePage.innerHTML += innerHTML;
-
-  addToDbCart(1, productId, count);
-  countCartItem();
-}
-
-function fetchDisplayCount(productId) {
-  const productContainers = document.querySelectorAll('.product__container');
-  let displayCount = NaN;
-
-  productContainers.forEach((productContainer) => {
-    const containerProductId = productContainer.getAttribute('data_product_id');
-    if (containerProductId === productId) {
-      displayCount =
-        productContainer.querySelector('.countDisplay').textContent;
+async function addToDbCart(userId, productId) {
+  try {
+    const response = await fetch('/addToDbCart', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({
+        userId: userId,
+        productId: productId,
+        productQuantity: 1,
+      }),
+    });
+    if (!response.ok) {
+      throw new Error('Failed to add item to cart db');
     }
-  });
-  return displayCount;
+
+    // Recalculate total price after adding to cart
+    calculateTotalPrice();
+    updateCartUI();
+  } catch (error) {
+    console.error(error);
+  }
 }
 
-function fetchDisplayCountForCart(productId) {
-  const cartContainers = document.querySelectorAll('.sidePageContainer');
-  let displayCount = NaN;
-
-  cartContainers.forEach((cartContainer) => {
-    const containerProductId = cartContainer.getAttribute('data_product_id');
-    if (parseInt(containerProductId) === productId) {
-      displayCount = cartContainer.querySelector('.sidePageCount').textContent;
+async function updateDataToCart(userId, productId, count) {
+  try {
+    const response = await fetch('/updateToDbCart', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({
+        userId: userId,
+        productId: productId,
+        productQuantity: count,
+      }),
+    });
+    if (!response.ok) {
+      throw new Error('Failed to update item quantity in the cart database');
     }
-  });
-  return displayCount;
+
+    // Recalculate total price after updating cart
+    calculateTotalPrice();
+    updateCartUI();
+  } catch (error) {
+    console.error(error);
+  }
 }
 
-function addToDbCart(userId, productId, count) {
-  fetch('/addToDbCart', {
-    method: 'POST',
-    headers: {
-      'Content-Type': 'application/json',
-    },
-    body: JSON.stringify({
-      userId: userId,
-      productId: productId,
-      productQuantity: count,
-    }),
-  })
-    .then((response) => {
-      if (!response.ok) {
-        console.log('Failed to add item to cart db');
-      }
-    })
-    .catch((err) => {
-      console.log(err);
+async function deleteDataFromCart(userId, productId) {
+  try {
+    const response = await fetch('/deleteFromDbCart', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({
+        userId: userId,
+        productId: productId,
+      }),
     });
+    if (!response.ok) {
+      throw new Error('Failed to delete item from db cart');
+    }
+
+    calculateTotalPrice();
+    updateCartUI();
+  } catch (error) {
+    console.error(error);
+  }
 }
 
-function updateDataToCart(userId, productId, count) {
-  fetch('/updateToDbCart', {
-    method: 'POST',
-    headers: {
-      'Content-Type': 'application/json',
-    },
-    body: JSON.stringify({
-      userId: userId,
-      productId: productId,
-      productQuantity: count,
-    }),
-  })
-    .then((response) => {
-      if (!response.ok) {
-        console.log('Failed to add item to cart db');
-      }
-    })
-    .catch((err) => {
-      console.log(err);
-    });
-}
+document.querySelector('.cart').addEventListener('click', function () {
+  fetchCartDetails(userId);
+  document.querySelector('.overlay').classList.remove('hidden');
+  document.querySelector('.sidePage').classList.remove('hidden');
+});
 
-function deleteDataFromCart(userId, productId) {
-  fetch('/deleteFromDbCart', {
-    method: 'POST',
-    headers: {
-      'Content-Type': 'application/json',
-    },
-    body: JSON.stringify({
-      userId: userId,
-      productId: productId,
-    }),
-  })
-    .then((response) => {
-      if (!response.ok) {
-        console.log('Failed to add item to cart db');
-      }
-    })
-    .catch((err) => {
-      console.log(err);
-    });
-}
+const closeCart = function () {
+  document.querySelector('.overlay').classList.add('hidden');
+  document.querySelector('.sidePage').classList.add('hidden');
+  document.querySelector('.profilePage').classList.add('hidden');
+  history.replaceState(null, null, window.location.pathname);
+};
 
 async function fetchCartDetails(userId) {
+  // let totalPrice = 0;
   try {
     const response = await fetch(`/cart/${userId}`);
     if (!response.ok) {
       throw new Error('Failed to fetch cart details');
     }
     const cartItems = await response.json();
-    // Process and render cart items as needed
+    calculateTotalPrice(cartItems);
+    const productDetails = await Promise.all(
+      cartItems.map(async (item) => {
+        const productResponse = await fetch(
+          `/products/product/${item.productId}`
+        );
+        if (!productResponse.ok) {
+          throw new Error(
+            `Failed to fetch product details for productId: ${item.productId}`
+          );
+        }
+        const product = await productResponse.json();
+        const productWithQuantity = {
+          ...product,
+          quantity: item.productQuantity,
+        };
+        return productWithQuantity;
+      })
+    );
+    displayCartItems(productDetails);
   } catch (error) {
     console.error('Error fetching cart details:', error);
   }
 }
 
-fetchCartDetails('1');
+function displayCartItems(productDetails) {
+  const cartSection = document.querySelector('.cartContainer');
+  let cartHTML = '';
+  if (productDetails.length === 0) {
+    cartHTML = '<div class="emptyCartMessage">No products added to cart</div>';
+  } else {
+    cartHTML = productDetails
+      .map((item) => {
+        return `
+        <div class="sidePageContainer productContainer" data-product-id="${item.productId}">
+          <div class="sidePageContainer__image">
+          <img src="${item.image}" alt="${item.name}" />
+          </div>
+          <div class="sidePageDetails">
+          <div class="sidePageDetails_name">${item.name}</div>
+          <div class="sidePageDetails_quantity">1kg</div>
+          </div>
+          <div class="countDiv sidePageButton"><button class="minusBtn">-</button><div class="countDisplay sidePageCount">${item.quantity}</div><button class="plusBtn">+</button></div>
+          <div class="sidePageDetails_price">&#8377 ${item.rate}</div>
+          </div>`;
+      })
+      .join('');
+  }
+  cartSection.innerHTML = cartHTML;
+}
 
-document.querySelector('.cart').addEventListener('click', function () {
-  // document.querySelector('.sidePage').classList.add('active');
-  document.querySelector('.overlay').classList.remove('hidden');
-  document.querySelector('.sidePage').classList.remove('hidden');
+fetchCartDetails(userId);
+
+document.querySelector('.categories').addEventListener('click', (event) => {
+  const categoryItem = event.target.closest('.category__item');
+  if (categoryItem) {
+    const categoryId = categoryItem.dataset.categoryId;
+    fetchProducts(categoryId);
+  }
 });
 
-// document.querySelector('.close-button').addEventListener('click', function () {
-//   // document.querySelector('.sidePage').classList.add('active');
-//   console.log('button clicked');
-//   document.querySelector('.overlay').classList.add('hidden');
-//   document.querySelector('.sidePage').classList.add('hidden');
-// });
+// Fetch products and cart items
+async function fetchProducts(sectionId = null) {
+  try {
+    const userId = localStorage.getItem('userId');
+    const [productsResponse, cartResponse, sectionNameResponse] =
+      await Promise.all([
+        fetch(sectionId ? `/products/${sectionId}` : '/products'),
+        fetch(`/cart/${userId}`),
+        sectionId ? fetchSectionName(sectionId) : Promise.resolve('Products'),
+      ]);
 
-const closeCart = function () {
-  document.querySelector('.overlay').classList.add('hidden');
-  document.querySelector('.sidePage').classList.add('hidden');
-  history.replaceState(null, null, window.location.pathname);
-};
+    if (!productsResponse.ok || !cartResponse.ok) {
+      throw new Error('Failed to fetch products or cart items');
+    }
 
-function countCartItem() {
-  const parentDiv = document.querySelector('.sidePage');
-  const noOfChildren = parentDiv.children.length;
+    const [products, cartItems, sectionName] = await Promise.all([
+      productsResponse.json(),
+      cartResponse.json(),
+      sectionNameResponse,
+    ]);
 
-  if (noOfChildren == 3) {
-    document.querySelector('.cartSpan').style.display = 'none';
-    document.querySelector('.emptyCartMessage').style.display = '';
-  } else {
-    document.querySelector('.cartSpan').style.display = '';
-    document.querySelector('.emptyCartMessage').style.display = 'none';
-    const changeCartcount = (document.querySelector('.cartSpan').textContent =
-      noOfChildren - 3);
+    // Map cart item productIds for quick lookup
+    const cartItemIds = cartItems.map((item) => item.productId);
+
+    // Render products with appropriate buttons
+    renderProducts(products, cartItemIds, cartItems);
+    document.querySelector('.products__heading').textContent = sectionName;
+  } catch (error) {
+    console.error('Error fetching products:', error);
   }
 }
-countCartItem();
+
+// Render products with appropriate buttons
+function renderProducts(products, cartItemIds, cartItems) {
+  const productsDiv = document.querySelector('.products');
+  const productsHTML = products
+    .map((product) => {
+      const isInCart = cartItemIds.includes(product.productId);
+      const cartItem = cartItems.find(
+        (item) => item.productId === product.productId
+      );
+      const quantity = cartItem ? cartItem.productQuantity : 0;
+
+      const addButtonHTML = isInCart
+        ? `
+      <div class="countDiv">
+      <button class="minusBtn">-</button>
+      <div class="countDisplay">${quantity}</div>
+      <button class="plusBtn">+</button>
+      </div>`
+        : `<div class="addbtn btn"><button class="productBtn">Add</button></div>`;
+
+      return `<div class="product__container productContainer" data-product-id="${product.productId}">
+        <div class="product__image">
+        <img src="${product.image}"/>
+        </div>
+        <div class="product__details">
+        <div class="product_name">${product.name}</div>
+        <div class="product_quantity">1 Kg</div>
+        <div class="productAndBtn">
+        <div class="product_rate">&#8377 ${product.rate}</div>
+        ${addButtonHTML}
+        </div>
+        </div>
+        </div>`;
+    })
+    .join('');
+
+  productsDiv.innerHTML = `<h2 class="products__heading">Products</h2>
+      <div class="product__list">${productsHTML}</div>`;
+}
+// document.addEventListener('DOMContentLoaded', fetchProducts);
+
+async function fetchSectionName(sectionId) {
+  try {
+    const response = await fetch(`/categories/${sectionId}`);
+    const data = await response.text();
+    return data;
+  } catch (err) {
+    return 'Products';
+  }
+}
+
+document.addEventListener('click', function (e) {
+  const plusBtn = e.target.closest('.plusBtn');
+  if (plusBtn) {
+    const countDisplay = plusBtn.previousElementSibling;
+    const count = parseInt(countDisplay.textContent);
+    const newCount = count + 1;
+    countDisplay.textContent = newCount;
+
+    // Update quantity in the product list
+    const productContainer = plusBtn.closest('.productContainer');
+    const productId = productContainer.dataset.productId;
+    updateProductQuantity(productId, newCount);
+
+    // Update quantity in the cart
+    updateDataToCart(userId, productId, newCount);
+  }
+});
+
+document.addEventListener('click', function (e) {
+  const minusBtn = e.target.closest('.minusBtn');
+  if (minusBtn) {
+    const countDisplay = minusBtn.nextElementSibling;
+    const count = parseInt(countDisplay.textContent);
+    if (count > 1) {
+      const newCount = count - 1;
+      countDisplay.textContent = newCount;
+
+      // Update quantity in the product list
+      const productContainer = minusBtn.closest('.productContainer');
+      const productId = productContainer.dataset.productId;
+      updateProductQuantity(productId, newCount);
+
+      // Update quantity in the cart
+      updateDataToCart(userId, productId, newCount);
+    } else if (count === 1) {
+      const productContainer = e.target.closest('.productContainer');
+      const container = productContainer.classList.contains(
+        'product__container'
+      )
+        ? 'product__container'
+        : 'sidePageContainer';
+      const productId = productContainer.dataset.productId;
+      if (container === 'product__container') {
+        const productAndBtn = productContainer.querySelector('.productAndBtn');
+        productAndBtn.removeChild(e.target.parentElement);
+        newHTML =
+          '<div class="addbtn btn"><button class="productBtn">Add</button></div>'; // Replace with add button HTML
+        productAndBtn.innerHTML += newHTML;
+        deleteDataFromCart(userId, productId);
+      } else if (container === 'sidePageContainer') {
+        productContainer.remove();
+        deleteDataFromCart(userId, productId);
+        const correspondingProductContainer = document.querySelector(
+          `.productContainer[data-product-id="${productId}"]`
+        );
+        const productAndBtn =
+          correspondingProductContainer.querySelector('.productAndBtn');
+        const countDiv = productAndBtn.querySelector('.countDiv');
+        countDiv.remove('countDiv');
+        newHTML =
+          '<div class="addbtn btn"><button class="productBtn">Add</button></div>'; // Replace with add button HTML
+        productAndBtn.innerHTML += newHTML;
+      }
+    }
+  }
+});
+
+function updateProductQuantity(productId, newCount) {
+  const productContainer = document.querySelector(
+    `.product__container[data-product-id="${productId}"]`
+  );
+  const countDisplay = productContainer.querySelector('.countDisplay');
+  countDisplay.textContent = newCount;
+}
+
+async function calculateTotalPrice() {
+  let totalPrice = 0;
+  let totalItems = 0;
+  try {
+    const response = await fetch(`/cart/${userId}`);
+    if (!response.ok) {
+      throw new Error('Failed to fetch cart items');
+    }
+    const cartItems = await response.json();
+    for (const item of cartItems) {
+      const productResponse = await fetch(
+        `/products/product/${item.productId}`
+      );
+      if (!productResponse.ok) {
+        throw new Error(
+          `Failed to fetch product details for productId: ${item.productId}`
+        );
+      }
+      const productDetails = await productResponse.json();
+      const subtotal = productDetails.rate * item.productQuantity;
+      totalPrice += subtotal;
+
+      totalItems += item.productQuantity;
+      const cartSpan = document.querySelector('.cartSpan');
+      cartSpan.textContent = totalItems;
+    }
+    return { totalPrice, totalItems };
+  } catch (error) {
+    console.error('Error calculating total price:', error);
+  }
+}
+
+async function updateCartUI() {
+  try {
+    const { totalPrice, totalItems } = await calculateTotalPrice();
+
+    const cartSpan = document.querySelector('.cartSpan');
+    if (totalItems === 0) {
+      const cartSection = document.querySelector('.cartContainer');
+      let cartHTML = '';
+      cartHTML =
+        '<div class="emptyCartMessage">No products added to cart</div>';
+      cartSection.innerHTML = cartHTML;
+      cartSpan.style.display = 'none';
+    } else {
+      cartSpan.style.display = 'inline-block';
+    }
+
+    // Update total amount inside the cart container
+    const totalAmountElement = document.querySelector('.totalAmount');
+    if (totalPrice > 0) {
+      totalAmountElement.style.display = '';
+      totalAmountElement.textContent = 'Subtotal: ₹' + totalPrice.toFixed(2);
+    } else if (totalPrice === 0) {
+      totalAmountElement.style.display = 'none';
+    }
+  } catch (error) {
+    console.error('Error updating cart UI:', error);
+  }
+}
+
+async function fetchUserDetails(userId) {
+  try {
+    const response = await fetch(`/getUserDetails/${userId}`);
+    if (!response.ok) {
+      throw new Error('User details not found');
+    }
+    const data = await response.json();
+    console.log('User details:', data);
+    document.querySelector('.profileImage').style.backgroundColor =
+      data.backgroundColor;
+    document.getElementById('fullName').value = data.fullName;
+    document.getElementById('username').value = data.user.username;
+    document.getElementById('email').value = data.email;
+    document.getElementById('date').value = data.dateOfBirth;
+    document.getElementById('address').value = data.address;
+    return data;
+  } catch (error) {
+    console.error('Error fetching user details:', error);
+    throw error; //
+  }
+}
+
+document
+  .getElementById('userForm')
+  .addEventListener('submit', async function (e) {
+    e.preventDefault();
+    const fullName = document.getElementById('fullName').value;
+    const email = document.getElementById('email').value;
+    const dateOfBirth = document.getElementById('date').value;
+    const address = document.getElementById('address').value;
+
+    const updatedUserDetail = {
+      fullName,
+      email,
+      dateOfBirth,
+      address,
+    };
+
+    try {
+      const response = await fetch(`/updateUserDetails/${userId}`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(updatedUserDetail),
+      });
+      if (!response.ok) {
+        throw new Error('Failed to update user details');
+      }
+
+      const data = await response.json();
+
+      fetchUserDetails(userId);
+    } catch (err) {
+      console.error('Error updating user details:', err);
+    }
+  });

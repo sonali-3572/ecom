@@ -9,5 +9,5 @@ import com.ecom.ecom.entities.Product;
 public interface ProductDao extends JpaRepository<Product,Long>{
 	List<Product> findBySectionId(Long sectionId);
 	void deleteBySectionId(Long sectionId);
-//	void deleteByProductId(Long productId);
+	Product findByProductId(Long productId);
 }

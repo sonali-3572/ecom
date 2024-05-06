@@ -1,6 +1,20 @@
+const body = document.querySelector('body');
+const userid = localStorage.getItem('userId');
+body.dataset.userId = userid;
+
+document.addEventListener('DOMContentLoaded', function () {
+  var userId = localStorage.getItem('userId');
+  if (!userId) {
+    window.location.href = '/';
+  }
+});
+
 document.querySelector('.logout').addEventListener('click', function () {
   console.log('logout  button clicked');
   if (confirm('Are you sure you want to logout?')) {
+    window.addEventListener('beforeunload', function (e) {
+      localStorage.clear();
+    });
     window.location.href = '/';
   }
 });

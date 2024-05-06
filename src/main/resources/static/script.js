@@ -1,6 +1,9 @@
 document.addEventListener('DOMContentLoaded', function () {
-  changeHeading(); // Call changeHeading function on page load to set initial heading
+  changeHeading();
 });
+// window.addEventListener('beforeunload', function (event) {
+//   localStorage.clear();
+// });
 
 var content = [
   'Wide selection, delivered fresh. Shop online for all your grocery needs, from pantry staples to seasonal delights.',
@@ -30,59 +33,66 @@ function changeHeading() {
   }
 }
 
+var body = document.querySelector('body');
 var loginContainer = document.querySelector('.login-container');
 var overlay = document.querySelector('.overlay');
 document.querySelector('.loggingBtn').addEventListener('click', function () {
+  body.style.overflowY = 'hidden';
   overlay.classList.remove('hidden');
   loginContainer.classList.remove('hidden');
   loginContainer.style.opacity = 12;
 });
 
-document
-  .querySelector('.loginBtn')
-  .addEventListener('click', async function () {
-    overlay.classList.add('hidden');
-    loginContainer.classList.add('hidden');
-    loginContainer.style.opacity = 1;
+document.querySelector('.loginBtn').addEventListener('click', function () {
+  body.style.overflowY = 'scroll';
+  overlay.classList.add('hidden');
+  loginContainer.classList.add('hidden');
+  loginContainer.style.opacity = 1;
 
-    var selectType = document.querySelector('#userType').value;
-    var username = document.getElementById('username').value;
-    var password = document.getElementById('password').value;
+  var selectType = document.querySelector('#userType').value;
+  var username = document.getElementById('username').value;
+  var password = document.getElementById('password').value;
 
-    const login = async () => {
-      try {
-        const response = await fetch('/loginDetail', {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-          },
-          body: JSON.stringify({ username, password, userType: selectType }),
-        });
-        console.log(response);
+  // localStorage.setItem('userId', 'ASDF');
+  // localStorage.setItem('userType', 'DDFFG');
 
-        if (!response.ok) {
-          throw new Error(`HTTP error! status: ${response.status}`);
-        } else {
-          const data = await response.text();
-          console.log(data);
-          if (data === 'Login successful as Admin') {
-            window.location.href = '/adminDashboard.html';
-          } else if (data === 'Login successful as Customer') {
-            window.location.href = '/customerDashboard.html';
-          } else {
-            alert(data);
-          }
-        }
-      } catch (err) {
-        console.error('Error:', err);
-        alert(err.message || 'An error occurred while logging in.');
+  fetch('/loginDetail', {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+    },
+    body: JSON.stringify({ username, password, userType: selectType }),
+  })
+    .then((response) => {
+      if (response.ok) {
+        return response.json(); // Parse response as JSON
+      } else {
+        throw new Error('Login failed');
       }
-    };
-
-    await login(); // Wait for the login function to complete
-  });
+    })
+    .then((data) => {
+      console.log(data);
+      if (data.userType) {
+        localStorage.setItem('userId', data.userId);
+        localStorage.setItem('userType', data.userType);
+        localStorage.setItem('username', username);
+        console.log('Local Storage Data ' + localStorage.getItem('userId'));
+        window.location.href =
+          selectType === 'admin'
+            ? '/adminDashboard.html'
+            : '/customerDashboard.html';
+      } else {
+        alert(data.message);
+      }
+    })
+    .catch((error) => {
+      console.error('Error:', error); // Handle error
+      alert('Login failed');
+    });
+});
 
 document.querySelector('.registerBtn').addEventListener('click', function () {
+  body.style.overflowY = 'scroll';
   overlay.classList.add('hidden');
   loginContainer.classList.add('hidden');
   loginContainer.style.opacity = 1;
@@ -99,11 +109,22 @@ document.querySelector('.registerBtn').addEventListener('click', function () {
     body: JSON.stringify({ username, password, userType: selectType }),
   })
     .then((response) => {
-      console.log('Response:', response);
       if (response.ok) {
-        window.location.href = '/dashboard.html';
+        return response.json(); // Parse response as JSON
       } else {
-        throw new Error('Failed to register');
+        alert('User already exist. Please login...');
+      }
+    })
+    .then((data) => {
+      console.log(data);
+      if (data.userType) {
+        localStorage.setItem('userId', data.userId);
+        localStorage.setItem('userType', data.userType);
+        localStorage.setItem('username', username);
+        console.log('Local Storage Data ' + localStorage.getItem('userId'));
+        window.location.href = '/customerDashboard.html';
+      } else {
+        alert(data.message);
       }
     })
     .catch((error) => {
@@ -116,9 +137,42 @@ document.querySelector('.close-button').addEventListener('click', function () {
   document.querySelector('#userType').value = 'select';
   document.getElementById('username').value = null;
   document.getElementById('password').value = '';
+  body.style.overflowY = 'scroll';
 
   overlay.classList.add('hidden');
   loginContainer.classList.add('hidden');
 
   loginContainer.style.opacity = 1;
+});
+
+document.getElementById('contactForm').addEventListener('submit', function (e) {
+  e.preventDefault();
+  var formData = {
+    name: document.getElementById('nameContactForm').value,
+    email: document.getElementById('emailContactForm').value,
+    message: document.getElementById('messageContactForm').value,
+  };
+
+  fetch('/submitQuery', {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+    },
+    body: JSON.stringify(formData),
+  })
+    .then((response) => {
+      if (response.ok) {
+        console.log(response);
+        document.getElementById('nameContactForm').value = '';
+        document.getElementById('emailContactForm').value = '';
+        document.getElementById('messageContactForm').value = '';
+      } else {
+        console.error('Failed to send email');
+        alert('Failed to send email');
+      }
+    })
+    .catch((error) => {
+      console.error('Error:', error);
+      alert('Failed to send email');
+    });
 });

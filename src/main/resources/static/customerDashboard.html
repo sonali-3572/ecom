@@ -6,15 +6,15 @@
     <title>Cusomer Dashboard</title>
     <link rel="stylesheet" href="customerStyle.css" />
   </head>
-  <body>
+  <body data-user-id="">
     <div class="content" data-user-id="">
       <nav class="navbar">
-        <div class="navbar__username">Username</div>
-        <div class="navbar__logo"><span>E</span>-Commerce</div>
+        <div class="navbar__logo"><span>Eco</span>-Basket</div>
+        <div class="navbar__search">Search</div>
         <div class="navbar__list">
           <ul>
             <li>
-              <a href="" class="navbar__list-item profile">Profile</a>
+              <a href="#profile" class="navbar__list-item profile">Profile</a>
             </li>
             <li>
               <a href="#cart" class="navbar__list-item cart"
@@ -34,7 +34,42 @@
       <h2 class="cartSection">Cart</h2>
       <div class="close-button" onclick="closeCart()"></div>
 
-      <div class="emptyCartMessage">No products added to cart</div>
+      <div class="cartContainer"></div>
+      <div class="totalAmount"></div>
+    </div>
+    <div class="profilePage hidden">
+      <div
+        class="close-button"
+        onclick="closeCart()"
+        style="color: black"
+      ></div>
+      <div class="profile_heading">Edit Profile</div>
+      <div class="ProfileUpdateForm">
+        <div class="profilePic">
+          <div class="profileImage"></div>
+        </div>
+        <form id="userForm" class="userForm">
+          <label for="fullName">Full Name:</label>
+          <input type="text" id="fullName" name="fullName" />
+          <label for="username">Username:</label>
+          <input type="text" id="username" name="username" readonly />
+          <label for="email">Email:</label>
+          <input type="email" id="email" name="email" required />
+          <label for="dob">Date of Birth:</label>
+          <input type="date" id="date" name="date" required />
+          <label for="address">Address:</label>
+          <input type="text" id="address" name="address" />
+          <!-- <div class="checkbox">
+            <input
+              type="checkbox"
+              id="changeBackground"
+              name="changeBackground"
+            />
+            <label for="changeBackground">Change Background Color:</label>
+          </div> -->
+          <button type="submit">Save Changes</button>
+        </form>
+      </div>
     </div>
     <div class="overlay hidden"></div>
     <script defer src="customerScript.js"></script>

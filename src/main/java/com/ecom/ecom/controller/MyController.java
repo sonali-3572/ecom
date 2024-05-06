@@ -5,6 +5,9 @@ import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.mail.SimpleMailMessage;
+import org.springframework.mail.javamail.JavaMailSender;
+import org.springframework.mail.javamail.MimeMessageHelper;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -16,19 +19,28 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.ecom.ecom.entities.Cart;
 import com.ecom.ecom.entities.Category;
+import com.ecom.ecom.entities.ContactForm;
 import com.ecom.ecom.entities.Product;
 import com.ecom.ecom.entities.ProductDTO;
 import com.ecom.ecom.entities.User;
+import com.ecom.ecom.entities.UserDetail;
 import com.ecom.ecom.services.CartService;
 import com.ecom.ecom.services.CategoryService;
 import com.ecom.ecom.services.ProductService;
+import com.ecom.ecom.services.UserDetailService;
 import com.ecom.ecom.services.UserService;
+
+import jakarta.mail.MessagingException;
+import jakarta.mail.internet.MimeMessage;
 
 
 @RestController
 public class MyController {
 	@Autowired
 	private UserService userService;
+	
+	@Autowired
+	private UserDetailService userDetailService;
 	
 	@Autowired
 	private CategoryService categoryService;
@@ -38,6 +50,9 @@ public class MyController {
 	
 	@Autowired
 	private CartService cartService;
+	
+	@Autowired
+    private JavaMailSender emailSender;
 	
 	@GetMapping("/home")
 	public String home() {
@@ -90,7 +105,7 @@ public class MyController {
 	}
 	
 	@PostMapping("/loginDetail")
-	public String loginDetail(@RequestBody User user) {
+	public ResponseEntity<?> loginDetail(@RequestBody User user) {
 		return this.userService.loginDetail(user);
 	}
 
@@ -139,4 +154,41 @@ public class MyController {
 		Product updatedProduct = this.productService.updateProduct(existingProduct);
         return updatedProduct;
 	}
+	
+	@PostMapping("/submitQuery")
+	public String submitQuery(@RequestBody ContactForm form) {
+		// send email
+		sendEmail(form.getEmail(),"sonalichaurasiya001@gmail.com",form.getName(),form.getMessage());
+		return "Email sent successfully";
+	}
+	
+	private void sendEmail(String from,String to, String name,String message) {
+		MimeMessage msg = emailSender.createMimeMessage();
+	    MimeMessageHelper helper = new MimeMessageHelper(msg);
+	    try {
+	        helper.setFrom(from);
+	        helper.setTo(to);
+	        helper.setSubject("New message from " + name);
+	        helper.setText(message);
+	        emailSender.send(msg);
+	    } catch (MessagingException e) {
+	        e.printStackTrace();
+	    }
+	}
+	
+	@GetMapping("/products/product/{productId}")
+	public Product getProductByProductId(@PathVariable Long productId){
+		return this.productService.getProductByProductId(productId);
+	}
+	
+	@GetMapping("/getUserDetails/{userId}")
+	public ResponseEntity<UserDetail> getUserDetail(@PathVariable String userId) {
+		return this.userDetailService.getUserDetail(Long.parseLong(userId));
+	}
+	
+	@PostMapping("/updateUserDetails/{userId}")
+	public UserDetail updateUserDetail(@RequestBody UserDetail userDetail,@PathVariable Long userId){
+		return this.userDetailService.updateUserDetail(userDetail,userId);
+	}
 }
+

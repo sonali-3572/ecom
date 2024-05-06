@@ -11,7 +11,8 @@ body {
 
 /* navbar */
 .navbar {
-  background-color: rgba(10, 10, 10, 0.97);
+  /* background-color: rgba(10, 10, 10, 0.97); */
+  background-color: #03045e;
   color: wheat;
   overflow: hidden;
   position: fixed;
@@ -50,6 +51,7 @@ body {
 }
 .navbar__list a {
   display: inline-flex;
+  align-items: center;
   color: white;
   text-decoration: none;
   padding: 5px 8px;
@@ -141,8 +143,9 @@ body {
 
 .categoryHeading {
   text-align: center;
-  padding: 10px;
   font-size: 2em;
+  cursor: pointer;
+  margin: 10px 70px;
 }
 
 ::-webkit-scrollbar {
@@ -326,7 +329,7 @@ body {
   display: flex;
   height: 100px;
   width: 80%;
-  margin: 0px auto;
+  margin: 10px auto;
   background-color: wheat;
   padding: 5px 20px;
   border-radius: 10px;
@@ -416,4 +419,106 @@ body {
   color: #adadad;
   margin: 10px;
   text-align: center;
+}
+
+.totalAmount {
+  display: flex;
+  justify-content: flex-end;
+  align-items: flex-end;
+  font-size: 1.6em;
+  font-weight: 600;
+  /* width: 80%; */
+  width: fit-content;
+  margin: 10px auto;
+  margin-right: 67px;
+  background-color: rgb(82, 184, 23);
+  padding: 10px 20px;
+  border-radius: 10px;
+}
+
+/* profile page css */
+
+.profilePage {
+  background-color: white;
+  height: 100vh;
+  position: fixed;
+  left: 0px;
+  width: 100%;
+  z-index: 15;
+  padding: 20px 50px;
+  overflow-y: scroll;
+}
+.profile_heading {
+  text-align: center;
+  font-size: 2.8em;
+  cursor: pointer;
+  margin: 10px 70px;
+  font-weight: 600;
+}
+
+.profilePic {
+  height: 100px;
+  width: 50%;
+  margin: 10px auto;
+}
+.profileImage {
+  height: 100%;
+  width: 100px;
+  margin: auto;
+  border-radius: 50%;
+  background-color: pink;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  font-size: 7em;
+  color: white;
+}
+.ProfileUpdateForm {
+  padding: 20px;
+  padding-top: 10px;
+}
+
+.userForm {
+  width: 50%;
+  margin: 10px auto;
+}
+
+.userForm label {
+  margin-bottom: 10px;
+  font-size: 1.6em;
+  display: inline-block;
+  text-align: left;
+}
+.userForm input[type='text'],
+.userForm input[type='date'],
+.userForm input[type='email'] {
+  font-size: 1.6em;
+  outline: none;
+  width: 100%;
+  padding: 5px;
+  margin-bottom: 20px;
+  border-radius: 5px;
+  border: 1px solid black;
+}
+/* .userForm input[type='checkbox'] {
+  font-size: 1.6em;
+  margin-right: 5px;
+} */
+.userForm button {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 30%;
+  padding: 10px 20px;
+  margin: 10px;
+  margin-left: 0px;
+  font-size: 1.6em;
+  cursor: pointer;
+  background-color: #007bff;
+  color: white;
+  border: none;
+  border-radius: 5px;
+}
+.userForm button:hover {
+  background-color: #0056b3;
 }

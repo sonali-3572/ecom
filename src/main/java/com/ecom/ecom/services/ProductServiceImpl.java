@@ -61,5 +61,10 @@ public class ProductServiceImpl implements ProductService {
 	public Product updateProduct(Product existingProduct) {
 		return productDao.save(existingProduct);
 	}
+
+	@Override
+	public Product getProductByProductId(Long productId) {
+		return productDao.findByProductId(productId);
+	}
 	
 }

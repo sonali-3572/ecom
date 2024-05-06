@@ -7,9 +7,11 @@ import jakarta.persistence.Id;
 import jakarta.persistence.Table;
 
 @Entity
+@Table(name="user")
 public class User {
 	@Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+	//@GeneratedValue(strategy = GenerationType.AUTO)
 	private Long id;
 	private String username;
 	private String password;
@@ -29,6 +31,10 @@ public class User {
 	@Override
 	public String toString() {
 		return "User [username=" + username + ", password=" + password + ", userType=" + userType + "]";
+	}
+
+	public Long getUserId() {
+		return id;
 	}
 
 	public String getUsername() {
