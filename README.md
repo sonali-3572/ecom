@@ -1,14 +1,20 @@
 **E-Commerce Project**
+
 This is a simple E-Commerce project built with Spring Boot and MySQL. It provides basic functionalities such as managing products, sections, and user details.
 
 **Database Setup**
+
 Creating Database and Tables
 Run the following SQL queries to create the necessary database and tables:
+
 -- CREATE DATABASE
+
 CREATE DATABASE IF NOT EXISTS ecomproject;
+
 USE ecomproject;
 
 -- CREATE TABLES
+
 CREATE TABLE IF NOT EXISTS sections (
   section_id INT NOT NULL AUTO_INCREMENT PRIMARY KEY,
   name VARCHAR(100) NOT NULL,
@@ -44,13 +50,14 @@ CREATE TABLE IF NOT EXISTS UserDetails (
 );
 
 **Inserting Sample Data**
+
 You can insert some sample data into the tables using the following SQL queries:
+
 -- INSERT SAMPLE DATA
+
 INSERT INTO user VALUES 
-       (1, 'sonali', 'sonali', 'customer'),
-       (2, 'admin', 'admin', 'admin'), 
-       (3, 'ashu', 'ashu', 'customer'),
-       (4, 'sonali', 'sonali', 'admin');
+       (1, 'sonali', 'sonali', 'admin'),
+       (2, 'admin', 'admin', 'admin');
 
 INSERT INTO sections VALUES
   (1, 'Fruits and Vegetables', 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRbK-kmvI60gkk2wv3DIKqpSNiKNE10yviACA&s'),
@@ -72,9 +79,35 @@ INSERT INTO products VALUES
   (8, 'Pepsi', '2024-04-01', '2027-04-01', 60.00, 4, 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSZlKbBaHD1pFI7eh-FRuqCCpAILWNRCFXLpA&s'),
   (9, 'Dairy milk silk', '2024-04-24', '2024-04-26', 90.00, 7, 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcR4NuDiPxW-vNmbLgzGBJDcmgSHmgNL-z1mqQ&s');
 
+**Running the Application**
 
+To run the application locally using Eclipse, you can follow these steps: 
+
+Clone the Repository: 
+- Open Eclipse and switch to the Git perspective. 
+- Clone the repository by clicking on "Clone a Git repository" and providing the repository URL (https://github.com/sonali-3572/ecom.git). 
+- Follow the prompts to clone the repository to your local machine. 
+
+Import the Project into Eclipse: 
+- Once the repository is cloned, switch back to the Java perspective in Eclipse. 
+- Import the project into Eclipse by selecting "File" > "Import..." > "Existing Maven Projects". 
+- Browse to the directory where you cloned the repository and select the project. 
+- Click "Finish" to import the project into Eclipse. 
+
+Build the Project: 
+- Eclipse should automatically recognize the project as a Maven project. 
+- Right-click on the project in the Project Explorer, then select "Run As" > "Maven Build..." 
+- In the "Goals" field, type clean install and click "Run". 
+
+Run the Application: 
+- Once the build is successful, right-click on the project again and select "Run As" > "Spring Boot App". 
+- Eclipse will start the Spring Boot application, and you should see the application running in the Console tab. 
+
+Access the Application: 
+- Open a web browser and go to http://localhost:8080 to access the application. 
 
 **Additional Notes**
+
 - Make sure you have MySQL installed on your local machine and update the database configurations (application.properties) accordingly.
 - You may need to adjust the port number in the application.properties file if 8080 is already in use on your system.
 Feel free to explore the code and customize it according to your requirements! If you have any questions or issues, please don't hesitate to reach out.
