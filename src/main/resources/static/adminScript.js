@@ -6,7 +6,30 @@ document.addEventListener('DOMContentLoaded', function () {
   var userId = localStorage.getItem('userId');
   if (!userId) {
     window.location.href = '/';
+    fetchCategories();
+    updateDashboard();
+    renderOrderList();
   }
+
+  const sideNavbar = document.querySelector('.sideNavbar');
+  sideNavbar.addEventListener('click', function (event) {
+    if (event.target.classList.contains('navbar-link')) {
+      event.preventDefault();
+      const targetId = event.target.getAttribute('href').substring(1);
+      document.querySelectorAll('.displaySection').forEach(function (content) {
+        content.style.display = 'none';
+      });
+      document.getElementById(targetId + 'Content').style.display = 'block';
+    }
+  });
+});
+fetchCategories();
+
+document.querySelector('.profile').addEventListener('click', function () {
+  const overlay = document.querySelector('.overlay');
+  overlay.classList.remove('hidden');
+  const profilePage = document.querySelector('.profilePage');
+  profilePage.classList.remove('hidden');
 });
 
 document.querySelector('.logout').addEventListener('click', function () {
@@ -68,7 +91,6 @@ function fetchCategories() {
     })
     .catch((err) => console.log(err));
 }
-document.addEventListener('DOMContentLoaded', fetchCategories);
 
 function deleteCategory(sectionId) {
   fetch(`/deleteCategory/${sectionId}`, {
@@ -379,5 +401,276 @@ async function editDetails(productId, name, sectionId) {
     fetchProductByCategory(name, sectionId);
   } catch (error) {
     console.error('Error updating product:', error);
+  }
+}
+
+async function fetchUsername(userId) {
+  try {
+    const response = await fetch(`/getUsername/${userId}`);
+    if (!response.ok) {
+      throw new Error('Failed to fetch username');
+    }
+    const user = await response.text();
+    console.log(user);
+    return user;
+  } catch (error) {
+    console.error('Error fetching username:', error);
+    return null;
+  }
+}
+
+async function viewOrderDetails(orderId) {
+  try {
+    const response = await fetch(`/orders/${orderId}`);
+    if (!response.ok) {
+      throw new Error('Failed to fetch order details');
+    }
+    const orderDetails = await response.json();
+    console.log(orderDetails);
+    displayOrderDetailsModal(orderDetails);
+  } catch (error) {
+    console.error('Error fetching order details:', error);
+  }
+}
+
+async function displayOrderDetailsModal(orderDetails) {
+  // Get the modal and its content
+  const modal = document.getElementById('orderDetailsModal');
+  const modalContent = document.getElementById('orderDetailsContent');
+
+  modalContent.innerHTML = '';
+  for (const item of orderDetails) {
+    try {
+      const productResponse = await fetch(
+        `/products/product/${item.productId}`
+      );
+      if (!productResponse.ok) {
+        throw new Error(
+          `Failed to fetch product details for product ID: ${item.productId}`
+        );
+      }
+      const productDetails = await productResponse.json();
+      console.log(productDetails);
+      const itemElement = document.createElement('div');
+      itemElement.classList.add('item');
+      itemElement.innerHTML = `
+        <p>Product: ${productDetails.name}</p>
+        <p>Quantity: ${item.quantity}</p>
+        <p>Price: ${item.unitPrice}</p>
+        <hr>
+      `;
+      modalContent.appendChild(itemElement);
+    } catch (error) {
+      console.error('Error fetching product details:', error);
+    }
+  }
+  modal.style.display = 'block';
+
+  const closeButton = modal.querySelector('.close');
+  closeButton.addEventListener('click', () => {
+    modal.style.display = 'none';
+  });
+
+  window.addEventListener('click', (event) => {
+    if (event.target === modal) {
+      modal.style.display = 'none';
+    }
+  });
+}
+
+async function fetchCount(endpoint) {
+  try {
+    const response = await fetch(endpoint);
+    if (!response.ok) {
+      throw new Error(`Failed to fetch ${endpoint}`);
+    }
+    const data = await response.json();
+    console.log(data);
+    return data;
+  } catch (error) {
+    console.error(`Error fetching ${endpoint}:`, error);
+    return null;
+  }
+}
+
+async function updateDashboard() {
+  const userCountData = await fetchCount('/userCount');
+  const orderCountData = await fetchCount('/orderCount');
+  const productCountData = await fetchCount('/productCount');
+  const totalSalesData = await fetchCount('/totalSales');
+
+  console.log(userCountData, orderCountData, productCountData, totalSalesData);
+
+  // Update user count
+  const userCountElement = document.querySelector('.userCount');
+  userCountElement.textContent = userCountData !== null ? userCountData : 0;
+
+  // Update order count
+  const orderCountElement = document.querySelector('.orderCount');
+  orderCountElement.textContent = orderCountData !== null ? orderCountData : 0;
+
+  // Update product count
+  const productCountElement = document.querySelector('.productCount');
+  productCountElement.textContent =
+    productCountData !== null ? productCountData : 0;
+
+  const totalSalesElement = document.querySelector('.countSales');
+  totalSalesElement.textContent = totalSalesData !== null ? totalSalesData : 0;
+}
+
+const statisticContent = document.querySelector('.statisticsDiv');
+statisticContent.addEventListener('click', updateDashboard);
+
+async function renderOrderList() {
+  const orderListElem = document.getElementById('orderList');
+  orderListElem.innerHTML = '';
+  try {
+    const response = await fetch('/orders');
+    if (!response.ok) {
+      throw new Error('Failed to fetch orders');
+    }
+    const orders = await response.json();
+    console.log(orders);
+
+    for (const order of orders) {
+      try {
+        const username = await fetchUsername(order.userId);
+        const row = document.createElement('tr');
+        row.innerHTML = `
+          <td>${order.orderId}</td>
+          <td>${username}</td>
+          <td>${order.orderDate}</td>
+          <td>${order.totalAmount}</td>
+          <td id="orderStatus_${order.orderId}">${order.orderStatus}</td>
+          <td>
+            <div class="buttons">
+            <button onclick="viewOrderDetails(${
+              order.orderId
+            })">View Details</button>
+            ${
+              order.orderStatus == 'Pending'
+                ? `
+              <button id="acceptBtn_${order.orderId}" onclick="acceptOrder(${order.orderId},${order.userId})">Accept Order</button>
+              <button id="rejectBtn_${order.orderId}" onclick="rejectOrder(${order.orderId},${order.userId})">Reject Order</button>
+            `
+                : ''
+            }
+            <div>
+          </td>
+        `;
+        orderListElem.appendChild(row);
+      } catch (error) {
+        console.error('Error fetching username:', error);
+      }
+    }
+  } catch (err) {
+    console.error('Error fetching orders:', err);
+  }
+}
+
+async function acceptOrder(orderId, userId) {
+  try {
+    const status = 'Accepted';
+    const response = await updateOrderStatus(orderId, status);
+    console.log(response);
+    if (response && response.ok) {
+      updateStatusInTable(orderId, status);
+      document.getElementById(`acceptBtn_${orderId}`).style.display = 'none';
+      document.getElementById(`rejectBtn_${orderId}`).style.display = 'none';
+
+      sendMessage(
+        userId,
+        orderId,
+        `Your order with ID ${orderId} has been accepted and will be delivered in 10 minutes.`
+      );
+
+      // Automatically update status to delivered after 2sec
+      setTimeout(() => {
+        updateOrderStatusAndTable(orderId, 'Delivered');
+        sendMessage(
+          userId,
+          orderId,
+          `Your order with ID ${orderId} has been delivered.`
+        );
+      }, 2000);
+    } else {
+      throw new Error('Failed to accept order');
+    }
+  } catch (error) {
+    console.error('Error accepting order:', error);
+  }
+}
+
+async function rejectOrder(orderId, userId) {
+  try {
+    const status = 'Rejected';
+    const response = await updateOrderStatus(orderId, status);
+    console.log(response);
+    if (response && response.ok) {
+      updateStatusInTable(orderId, status);
+      document.getElementById(`acceptBtn_${orderId}`).style.display = 'none';
+      document.getElementById(`rejectBtn_${orderId}`).style.display = 'none';
+      sendMessage(
+        userId,
+        orderId,
+        `Your order with ID ${orderId} has been rejected.`
+      );
+    } else {
+      throw new Error('Failed to reject order');
+    }
+  } catch (error) {
+    console.error('Error rejecting order:', error);
+  }
+}
+
+async function updateOrderStatus(orderId, status) {
+  try {
+    const response = await fetch(`/orders/${orderId}/${status}`, {
+      method: 'PUT',
+    });
+    return response;
+  } catch (error) {
+    console.error('Error updating order status:', error);
+  }
+}
+
+async function updateOrderStatusAndTable(orderId, status) {
+  try {
+    const response = await updateOrderStatus(orderId, status);
+    console.log(response);
+    if (response && response.ok) {
+      updateStatusInTable(orderId, status);
+    } else {
+      throw new Error('Failed to update order status');
+    }
+  } catch (error) {
+    console.error('Error updating order status:', error);
+  }
+}
+
+function updateStatusInTable(orderId, status) {
+  const statusCell = document.getElementById(`orderStatus_${orderId}`);
+  if (statusCell) {
+    statusCell.textContent = status;
+  }
+}
+
+renderOrderList();
+
+async function sendMessage(userId, orderId, message) {
+  try {
+    const response = await fetch('/sendMessage', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({ userId, orderId, message }),
+    });
+    if (!response.ok) {
+      throw new Error('Failed to send message');
+    }
+    console.log('Message sent successfully');
+  } catch (error) {
+    console.error('Error sending message:', error);
   }
 }

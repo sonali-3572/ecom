@@ -14,4 +14,5 @@ public interface ProductService {
 	public Product findById(Long productId);
 	public Product updateProduct(Product existingProduct);
 	public Product getProductByProductId(Long productId);
+	public Long getProductCount();
 }

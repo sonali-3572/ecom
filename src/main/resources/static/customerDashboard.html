@@ -14,12 +14,17 @@
         <div class="navbar__list">
           <ul>
             <li>
-              <a href="#profile" class="navbar__list-item profile">Profile</a>
+              <a href="#notifications" class="navbar__list-item notifications"
+                >Message</a
+              >
             </li>
             <li>
               <a href="#cart" class="navbar__list-item cart"
                 >Cart <span class="cartSpan"></span
               ></a>
+            </li>
+            <li>
+              <a href="#profile" class="navbar__list-item profile">Profile</a>
             </li>
             <li>
               <a href="#logout" class="navbar__list-item logout">Logout</a>
@@ -35,8 +40,20 @@
       <div class="close-button" onclick="closeCart()"></div>
 
       <div class="cartContainer"></div>
-      <div class="totalAmount"></div>
+      <div class="buttons">
+        <div class="totalAmount cartButtons"></div>
+        <div class="orderButton cartButtons" style="cursor: pointer">
+          Order Now
+        </div>
+      </div>
     </div>
+
+    <div class="notificationSection hidden" id="notification">
+      <h2 class="notificationHeading">Messages</h2>
+      <div class="close-button" onclick="closeCart()"></div>
+      <div class="messageContainer"></div>
+    </div>
+
     <div class="profilePage hidden">
       <div
         class="close-button"
@@ -70,6 +87,10 @@
           <button type="submit">Save Changes</button>
         </form>
       </div>
+    </div>
+
+    <div id="popup" class="popup hidden">
+      <p class="popupSection"></p>
     </div>
     <div class="overlay hidden"></div>
     <script defer src="customerScript.js"></script>

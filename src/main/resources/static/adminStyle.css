@@ -21,7 +21,8 @@ body {
 
 /* navbar */
 .navbar {
-  background-color: rgba(10, 10, 10, 0.97);
+  /* background-color: rgba(10, 10, 10, 0.97); */
+  background-color: #03045e;
   color: wheat;
   overflow: hidden;
   position: fixed;
@@ -44,7 +45,7 @@ body {
   color: rgb(40, 158, 40);
 }
 .navbar__list {
-  width: 20%;
+  width: fit-content;
 }
 
 .navbar__list ul {
@@ -56,6 +57,7 @@ body {
 }
 .navbar__list li {
   padding-right: 12px;
+  padding-left: 12px;
   border-right: 1px solid #adadad;
 }
 .navbar__list a {
@@ -118,18 +120,31 @@ body {
 }
 
 /* category table */
-.categoryTable {
-  position: fixed;
+/* .categoryTable {
+  position: absolute;
   top: 60px;
-  left: 0;
-  width: 100%;
+  left: 200px;
+  width: calc(100% - 200px);
   height: calc(100% - 60px);
   background-color: white;
   z-index: 1;
   padding: 20px;
+  overflow-y: scroll;
+} */
+
+.displaySection {
+  position: absolute;
+  top: 60px;
+  left: 200px;
+  width: calc(100% - 200px);
+  height: calc(100% - 60px);
+  background-color: white;
+  z-index: 1;
+  padding: 20px 40px;
+  overflow-y: scroll;
 }
 
-table {
+.categories {
   width: 100%;
   border-collapse: collapse;
   border-spacing: 0;
@@ -138,16 +153,16 @@ table {
   font-size: 1.2em;
 }
 
-th,
-td {
+.categories th,
+.categories td {
   padding: 10px;
   text-align: left;
   border-bottom: 1px solid #ddd;
   border: 1px solid #ddd;
 }
 
-th {
-  background-color: #dfdfdf;
+.categories th {
+  background-color: #acc8e5;
   color: #333;
   font-weight: bold;
   font-size: 1.4em;
@@ -155,22 +170,22 @@ th {
   border: 1px solid rgba(0, 0, 0, 0.25);
 }
 
-th:nth-child(1),
-td:nth-child(1) {
+.categories th:nth-child(1),
+.categories td:nth-child(1) {
   width: 5%;
   text-align: center;
   display: none;
 }
-th:nth-child(2),
-td:nth-child(2) {
+.categories th:nth-child(2),
+.categories td:nth-child(2) {
   width: 5%;
   text-align: center;
 }
-th:nth-child(3) {
+.categories th:nth-child(3) {
   width: 30%;
 }
 
-tbody tr:hover {
+.categories tbody tr:hover {
   background-color: #f5f5f5;
 }
 
@@ -297,7 +312,7 @@ tbody tr:hover {
 }
 
 .addRowBtn {
-  background-color: #4caf50;
+  background-color: #112a46;
   border: none;
   color: white;
   padding: 5px 10px;
@@ -308,7 +323,7 @@ tbody tr:hover {
 }
 
 .addRowBtn:hover {
-  background-color: #45a049;
+  background-color: #2664aa;
 }
 
 .addbtnOperation {
@@ -319,10 +334,10 @@ tbody tr:hover {
 
 /*product detail page*/
 .productDetails {
-  position: fixed;
+  position: absolute;
   top: 60px;
-  left: 0;
-  width: 100%;
+  left: 200px;
+  width: calc(100% - 200px);
   height: calc(100% - 60px);
   background-color: white;
   z-index: 1;
@@ -404,4 +419,221 @@ tbody tr:hover {
   width: 80%;
   outline: none;
   margin: auto;
+}
+
+.containers {
+  height: fit-content;
+  display: flex;
+}
+.totalProducts .img {
+  background-color: rgb(255, 165, 0);
+  box-shadow: 0 0 10px rgba(255, 165, 0, 0.8);
+}
+.totalUsers .img {
+  background-color: rgb(0, 0, 255);
+  box-shadow: 0 0 10px rgba(0, 0, 255, 0.8);
+}
+.totalSales .img {
+  background-color: green;
+  box-shadow: 0 0 10px rgba(0, 128, 0, 0.8);
+}
+.totalOrders .img {
+  background-color: rgb(255, 105, 105);
+  box-shadow: 0 0 10px rgba(255, 105, 105, 0.8);
+}
+
+.totalProducts,
+.totalUsers,
+.totalSales,
+.totalOrders {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  margin: 20px;
+  margin-left: 0px;
+  padding: 10px 10px;
+  border: 1px solid black;
+  border-radius: 10px;
+  margin-top: 0px;
+}
+
+.totalProducts .img,
+.totalUsers .img,
+.totalSales .img,
+.totalOrders .img {
+  width: 64px;
+  height: 64px;
+  /* border: 1px solid black; */
+  padding: 10px;
+  border-radius: 50%;
+  margin: 0px 20px;
+}
+
+.totalProducts .img path,
+.totalUsers .img path,
+.totalSales .img path,
+.totalOrders .img path {
+  fill: white;
+}
+
+.totalProducts .details,
+.totalUsers .details,
+.totalSales .details,
+.totalOrders .details {
+  margin: 10px;
+  margin-left: 5px;
+}
+
+.totalProducts h2,
+.totalUsers h2,
+.totalSales h2,
+.totalOrders h2 {
+  margin-top: 10px;
+  font-size: 18px;
+  color: #333;
+}
+
+.totalProducts .count,
+.totalUsers .count,
+.totalSales .count,
+.totalOrders .count {
+  font-size: 24px;
+  font-weight: bold;
+  color: #ff5733; /* Adjust color as needed */
+}
+
+.sideNavbar {
+  height: 100%;
+  width: 200px;
+  position: fixed;
+  z-index: 15;
+  top: 60px;
+  left: 0;
+  background-color: #333;
+  overflow-y: scroll;
+  padding-bottom: 60px;
+}
+
+.sideNavbar a {
+  padding: 10px 15px;
+  text-decoration: none;
+  font-size: 18px;
+  color: #fff; /* Link text color */
+  display: block;
+}
+
+/* .sideNavbar a:hover {
+  background-color: #555;
+} */
+
+.displaySectionHeading {
+  padding-bottom: 20px;
+  font-size: 2.6em;
+}
+
+.sidenav_containers {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  margin: 10px 20px;
+  padding-left: 10px;
+  border-radius: 10px;
+}
+
+.containerImage {
+  height: 24px;
+  width: 24px;
+}
+
+.sidenav_containers:hover {
+  background-color: #555;
+}
+
+/* order table css */
+.orderTable {
+  width: 100%;
+  border-collapse: collapse;
+  border-spacing: 0;
+  margin-bottom: 20px;
+  border: 1px solid #adadad;
+  font-size: 1.2em;
+}
+.orderTable th,
+.orderTable td {
+  padding: 10px;
+  text-align: left;
+  border-bottom: 1px solid #ddd;
+  text-align: center;
+  border: 1px solid #ddd;
+}
+
+.orderTable th {
+  background-color: #acc8e5;
+  color: #333;
+  font-weight: bold;
+  font-size: 1.4em;
+  padding: 15px 10px;
+  border: 1px solid rgba(0, 0, 0, 0.25);
+}
+
+.orderTable tbody tr:hover {
+  background-color: #f5f5f5;
+}
+
+.orderTable .buttons button {
+  padding: 1px 10px;
+  background-color: white;
+  border: 1px solid black;
+  outline: none;
+  margin-right: 5px;
+  border-radius: 5px;
+}
+
+/* Modal container */
+.modal {
+  display: none;
+  position: fixed;
+  z-index: 1000;
+  left: 0;
+  top: 0;
+  width: 100%;
+  height: 100%;
+  overflow: auto;
+  background-color: rgba(0, 0, 0, 0.5);
+}
+
+.modal-content {
+  background-color: #fefefe;
+  margin: 15% auto;
+  padding: 20px;
+  border: 1px solid #888;
+  width: 50%;
+  overflow: hidden;
+  border-radius: 10px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+}
+
+.modal-content h2 {
+  font-size: 2em;
+  margin: 10px 0px;
+}
+
+.close {
+  color: #aaa;
+  float: right;
+  font-size: 28px;
+  font-weight: bold;
+}
+
+.close:hover,
+.close:focus {
+  color: black;
+  text-decoration: none;
+  cursor: pointer;
+}
+
+.orderTable th:last-child,
+.orderTable td:last-child {
+  width: 350px;
+  text-align: left;
 }

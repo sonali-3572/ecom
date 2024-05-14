@@ -2,6 +2,16 @@ const userId = localStorage.getItem('userId');
 const body = document.querySelector('body');
 body.dataset.userId = userId;
 
+function showPopup(message, duration = 5000) {
+  console.log('popup message ', message);
+  const popup = document.getElementById('popup');
+  popup.textContent = message;
+  popup.classList.remove('hidden');
+  setTimeout(() => {
+    popup.classList.add('hidden');
+  }, duration);
+}
+
 var username = localStorage.getItem('username');
 document.querySelector('.profileImage').textContent = username
   .substring(0, 1)
@@ -180,9 +190,16 @@ document.querySelector('.cart').addEventListener('click', function () {
   document.querySelector('.sidePage').classList.remove('hidden');
 });
 
+document.querySelector('.notifications').addEventListener('click', function () {
+  fetchMessages(userId);
+  document.querySelector('.overlay').classList.remove('hidden');
+  document.querySelector('.notificationSection').classList.remove('hidden');
+});
+
 const closeCart = function () {
   document.querySelector('.overlay').classList.add('hidden');
   document.querySelector('.sidePage').classList.add('hidden');
+  document.querySelector('.notificationSection').classList.add('hidden');
   document.querySelector('.profilePage').classList.add('hidden');
   history.replaceState(null, null, window.location.pathname);
 };
@@ -464,11 +481,14 @@ async function updateCartUI() {
 
     // Update total amount inside the cart container
     const totalAmountElement = document.querySelector('.totalAmount');
+    const orderButton = document.querySelector('.orderButton');
     if (totalPrice > 0) {
       totalAmountElement.style.display = '';
+      orderButton.style.display = '';
       totalAmountElement.textContent = 'Subtotal: ₹' + totalPrice.toFixed(2);
     } else if (totalPrice === 0) {
       totalAmountElement.style.display = 'none';
+      orderButton.style.display = 'none';
     }
   } catch (error) {
     console.error('Error updating cart UI:', error);
@@ -526,9 +546,169 @@ document
       }
 
       const data = await response.json();
-
       fetchUserDetails(userId);
+      showPopup('Your profile has been updated successfully!');
     } catch (err) {
       console.error('Error updating user details:', err);
     }
   });
+
+document
+  .querySelector('.orderButton')
+  .addEventListener('click', async function () {
+    try {
+      const response = await fetch(`/cart/${userId}`);
+      if (!response.ok) {
+        throw new Error('Failed to fetch cart items');
+      }
+      const cartItems = await response.json();
+
+      if (cartItems.length > 0) {
+        const { totalPrice, totalItems } = await calculateTotalPrice();
+        const orderDetails = {
+          userId: userId,
+          orderDate: new Date().toISOString().split('T')[0],
+          totalAmount: totalPrice,
+          orderStatus: 'Pending',
+        };
+
+        const saveOrderResponse = await fetch('/saveOrder', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify(orderDetails),
+        });
+        if (!saveOrderResponse) {
+          throw new Error('Failed to save order details');
+        }
+        const data = await saveOrderResponse.json();
+
+        for (const item of cartItems) {
+          const productResponse = await fetch(
+            `/products/product/${item.productId}`
+          );
+          if (!productResponse.ok) {
+            throw new Error(
+              `Failed to fetch product details for productId: ${item.productId}`
+            );
+          }
+          const productDetails = await productResponse.json();
+          const amount = productDetails.rate * item.productQuantity;
+
+          const orderItemDetails = {
+            orderId: data.orderId,
+            userId: data.userId,
+            productId: item.productId,
+            quantity: item.productQuantity,
+            unitPrice: amount,
+          };
+
+          const saveOrderItemResponse = await fetch('/saveOrderItem', {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json',
+            },
+            body: JSON.stringify(orderItemDetails),
+          });
+          if (!saveOrderItemResponse.ok) {
+            throw new Error('Failed to save order item details');
+          }
+          const savedOrderItem = await saveOrderItemResponse.json();
+          deleteDataFromCart(userId, item.productId);
+        }
+
+        sendMessage(
+          userId,
+          data.orderId,
+          `Your order has been placed with order Id ${data.orderId}`
+        );
+      }
+      closeCart();
+      fetchProducts();
+      updateCartUI();
+      fetchUserDetails(userId);
+      showPopup(
+        'Your order has been placed. Please check message section for your orderId.'
+      );
+    } catch (error) {
+      console.error('Error placing order:', error);
+      alert('Failed to place order. Please try again later.');
+    }
+  });
+
+async function fetchMessages(userId) {
+  try {
+    const response = await fetch(`/notifications/${userId}`);
+    if (!response.ok) {
+      throw new Error('Failed to fetch messages');
+    }
+    const messages = await response.json();
+    console.log(messages);
+    displayMessages(messages);
+  } catch (error) {
+    console.error('Error fetching messages:', error);
+  }
+}
+
+function displayMessages(messages) {
+  const messageSection = document.querySelector('.messageContainer');
+  let messageHTML = '';
+  if (messages.length === 0) {
+    messageHTML = '<div class="noMessages">No messages available.</div>';
+  } else {
+    messages.reverse();
+    messageHTML = messages
+      .map((message) => {
+        const messageTime = calculateTimeDifference(
+          new Date(message.createdAt)
+        );
+        return `
+        <div class="inbox" data-order-id="${message.orderId}">
+          <p>
+            ${message.message}
+          </p>
+          <p>${messageTime}</p>
+        </div>`;
+      })
+      .join('');
+  }
+  messageSection.innerHTML = messageHTML;
+}
+
+function calculateTimeDifference(createdAt) {
+  const currentTime = new Date();
+  const differenceInSeconds = Math.floor((currentTime - createdAt) / 1000);
+  if (differenceInSeconds < 60) {
+    return `${differenceInSeconds} sec`;
+  } else if (differenceInSeconds < 3600) {
+    const minutes = Math.floor(differenceInSeconds / 60);
+    return `${minutes} min${minutes > 1 ? 's' : ''}`;
+  } else if (differenceInSeconds < 86400) {
+    const hours = Math.floor(differenceInSeconds / 3600);
+    return `${hours} hr${hours > 1 ? 's' : ''}`;
+  } else if (differenceInSeconds < 86400 * 5) {
+    const days = Math.floor(differenceInSeconds / 86400);
+    return `${days} day${days > 1 ? 's' : ''}`;
+  } else {
+    return '+5 days';
+  }
+}
+
+async function sendMessage(userId, orderId, message) {
+  try {
+    const response = await fetch('/sendMessage', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({ userId, orderId, message }),
+    });
+    if (!response.ok) {
+      throw new Error('Failed to send message');
+    }
+    console.log('Message sent successfully');
+  } catch (error) {
+    console.error('Error sending message:', error);
+  }
+}

@@ -66,5 +66,10 @@ public class ProductServiceImpl implements ProductService {
 	public Product getProductByProductId(Long productId) {
 		return productDao.findByProductId(productId);
 	}
+
+	@Override
+	public Long getProductCount() {
+		return productDao.count();
+	}
 	
 }

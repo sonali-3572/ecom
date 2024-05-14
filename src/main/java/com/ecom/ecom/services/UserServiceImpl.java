@@ -64,4 +64,18 @@ public class UserServiceImpl implements UserService{
 		}
 	}
 
+	@Override
+	public String getUsername(Long userId) {
+		User user=userDao.findById(userId).orElse(null);
+		if(user!=null) {
+			return user.getUsername();
+		}
+		return null;
+	}
+
+	@Override
+	public Long getUserCount() {
+		return userDao.countUserByUserType();
+	}
+
 }

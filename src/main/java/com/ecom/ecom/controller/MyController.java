@@ -20,12 +20,19 @@ import org.springframework.web.bind.annotation.RestController;
 import com.ecom.ecom.entities.Cart;
 import com.ecom.ecom.entities.Category;
 import com.ecom.ecom.entities.ContactForm;
+import com.ecom.ecom.entities.MessageDTO;
+import com.ecom.ecom.entities.Notification;
+import com.ecom.ecom.entities.Order;
+import com.ecom.ecom.entities.OrderItem;
 import com.ecom.ecom.entities.Product;
 import com.ecom.ecom.entities.ProductDTO;
 import com.ecom.ecom.entities.User;
 import com.ecom.ecom.entities.UserDetail;
 import com.ecom.ecom.services.CartService;
 import com.ecom.ecom.services.CategoryService;
+import com.ecom.ecom.services.NotificationService;
+import com.ecom.ecom.services.OrderItemService;
+import com.ecom.ecom.services.OrderService;
 import com.ecom.ecom.services.ProductService;
 import com.ecom.ecom.services.UserDetailService;
 import com.ecom.ecom.services.UserService;
@@ -38,6 +45,15 @@ import jakarta.mail.internet.MimeMessage;
 public class MyController {
 	@Autowired
 	private UserService userService;
+	
+	@Autowired
+	private NotificationService notificationService;
+	
+	@Autowired
+	private OrderItemService orderItemService;
+	
+	@Autowired
+	private OrderService orderService;
 	
 	@Autowired
 	private UserDetailService userDetailService;
@@ -189,6 +205,71 @@ public class MyController {
 	@PostMapping("/updateUserDetails/{userId}")
 	public UserDetail updateUserDetail(@RequestBody UserDetail userDetail,@PathVariable Long userId){
 		return this.userDetailService.updateUserDetail(userDetail,userId);
+	}
+	
+	@PostMapping("/saveOrder")
+	public Order saveOrder(@RequestBody Order order){
+		return this.orderService.saveOrder(order);
+	}
+	
+	@PostMapping("/saveOrderItem")
+	public OrderItem saveOrderItem(@RequestBody OrderItem orderItem) {
+		return this.orderItemService.saveOrderItem(orderItem);
+	}
+	
+	@GetMapping("/orders")
+	public List<Order> getAllOrders(){
+		return this.orderService.getAllOrders();
+	}
+	
+	@GetMapping("/getUsername/{userId}")
+	public String getUsername(@PathVariable Long userId) {
+		return this.userService.getUsername(userId);
+	}
+	
+	@GetMapping("/orders/{orderId}")
+	public List<OrderItem> getOrderItem(@PathVariable Long orderId){
+		return this.orderItemService.getOrderItem(orderId);
+	}
+	
+	@PutMapping("/orders/{orderId}/{status}")
+    public ResponseEntity<String> updateOrderStatus(@PathVariable Long orderId, @PathVariable String status) {
+       return this.orderService.updateOrderStatus(orderId,status);
+    }
+	
+	@GetMapping("/userCount")
+    public Long getUserCount() {
+        return this.userService.getUserCount();
+    }
+	
+	@GetMapping("/productCount")
+    public Long getProductCount() {
+        return this.productService.getProductCount();
+    }
+	
+	@GetMapping("/orderCount")
+    public Long getOrderCount() {
+        return this.orderService.getOrderCount();
+    }
+	
+	@GetMapping("/totalSales")
+    public Double getTotalSales() {
+        return this.orderService.getTotalSales();
+    }
+	
+	@PostMapping("/sendMessage")
+    public ResponseEntity<String> sendMessage(@RequestBody MessageDTO messageDTO) {
+        try {
+            notificationService.saveMessage(messageDTO.getUserId(),messageDTO.getOrderId(), messageDTO.getMessage());
+            return ResponseEntity.ok("Message saved successfully");
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Failed to save message: " + e.getMessage());
+        }
+    }
+	
+	@GetMapping("/notifications/{userId}")
+	public List<Notification> getMessages(@PathVariable Long userId){
+		return this.notificationService.getMessages(userId);
 	}
 }
 

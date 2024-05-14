@@ -7,17 +7,16 @@
     <link rel="stylesheet" href="adminStyle.css" />
   </head>
   <body data-user-id="">
-    <div class="content" data-user-id="">
+    <div class="content">
       <nav class="navbar">
-        <div class="navbar__username">Admin Username</div>
         <div class="navbar__logo"><span>Eco</span>-Basket</div>
         <div class="navbar__list">
           <ul>
             <li>
-              <a href="" class="navbar__list-item home">Home</a>
+              <a href="#" class="navbar__list-item home">Home</a>
             </li>
             <li>
-              <a href="#summary" class="navbar__list-item summary">Summary</a>
+              <a href="#profile" class="navbar__list-item profile">profile</a>
             </li>
             <li>
               <a href="#logout" class="navbar__list-item logout">Logout</a>
@@ -26,23 +25,333 @@
         </div>
       </nav>
 
-      <div class="categoryTable">
-        <table class="categories">
-          <thead>
-            <tr>
-              <th></th>
-              <th></th>
-              <th>Category</th>
-              <th class="addbtnOperation">
-                <div>Operation</div>
-                <div><button id="addRowBtn" class="addRowBtn">+</button></div>
-              </th>
-            </tr>
-          </thead>
-          <tbody class="tableBody"></tbody>
-        </table>
-      </div>
+      <div class="mainContainer">
+        <div class="sideNavbar">
+          <div class="sidenav_containers">
+            <div class="containerImage">
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="white"
+                stroke-width="2"
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                class="feather feather-monitor"
+              >
+                <rect x="2" y="3" width="20" height="14" rx="2" ry="2"></rect>
+                <line x1="8" y1="21" x2="16" y2="21"></line>
+                <line x1="12" y1="17" x2="12" y2="21"></line>
+              </svg>
+            </div>
+            <a href="#dashboard" class="navbar-link">Dashboard</a>
+          </div>
 
+          <div class="sidenav_containers">
+            <div class="containerImage">
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="white"
+                stroke-width="2"
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                class="feather feather-box"
+              >
+                <path d="M21 15v-9a2 2 0 0 0-2-2H5a2 2 0 0 0-2 2v9"></path>
+                <polyline points="17 15 12 10 7 15"></polyline>
+                <line x1="12" y1="10" x2="12" y2="21"></line>
+              </svg>
+            </div>
+            <a href="#products" class="navbar-link">Products</a>
+          </div>
+
+          <div class="sidenav_containers">
+            <div class="containerImage">
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="white"
+                stroke-width="2"
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                class="feather feather-shopping-cart"
+              >
+                <circle cx="9" cy="21" r="1"></circle>
+                <circle cx="20" cy="21" r="1"></circle>
+                <path
+                  d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61H19a2 2 0 0 0 2-1.61L23 6H6"
+                ></path>
+              </svg>
+            </div>
+            <a href="#orders" class="navbar-link">Orders</a>
+          </div>
+
+          <div class="sidenav_containers">
+            <div class="containerImage">
+              <svg
+                id="Layer_1"
+                data-name="Layer 1"
+                xmlns="http://www.w3.org/2000/svg"
+                viewBox="0 0 512 512"
+                fill="white"
+              >
+                <title>user-outline</title>
+                <path
+                  d="M320,310.18V277.27A128,128,0,0,0,384,166.4V128a128,128,0,0,0-256,0v38.4a128,128,0,0,0,64,110.87v32.91A172.84,172.84,0,0,0,51.2,480a32,32,0,0,0,32,32H428.8a32,32,0,0,0,32-32A172.84,172.84,0,0,0,320,310.18ZM153.6,166.4V128a102.4,102.4,0,1,1,204.8,0v38.4a102.4,102.4,0,1,1-204.8,0ZM256,294.4a127.94,127.94,0,0,0,38.4-5.86v29.77l-38.4,23-38.4-23V288.54A127.94,127.94,0,0,0,256,294.4Zm172.8,192H83.2a6.41,6.41,0,0,1-6.4-6.4c0-71.72,51.56-131.61,119.56-144.58L256,371.2l59.64-35.78c68,13,119.56,72.86,119.56,144.58A6.41,6.41,0,0,1,428.8,486.4Z"
+                />
+              </svg>
+            </div>
+            <a href="#customers" class="navbar-link">Customers</a>
+          </div>
+
+          <div class="sidenav_containers statisticsDiv">
+            <div class="containerImage">
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="white"
+                stroke-width="2"
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                class="feather feather-trending-up"
+              >
+                <polyline points="23 6 13.5 15.5 8.5 10.5 1 18"></polyline>
+                <polyline points="17 6 23 6 23 12"></polyline>
+              </svg>
+            </div>
+            <a href="#statistics" class="navbar-link">Statistics</a>
+          </div>
+
+          <div class="sidenav_containers">
+            <div class="containerImage">
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="white"
+                stroke-width="2"
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                class="feather feather-star"
+              >
+                <polygon
+                  points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"
+                ></polygon>
+              </svg>
+            </div>
+            <a href="#reviews" class="navbar-link">Reviews</a>
+          </div>
+
+          <div class="sidenav_containers">
+            <div class="containerImage">
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="white"
+                stroke-width="2"
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                class="feather feather-credit-card"
+              >
+                <rect x="1" y="4" width="22" height="16" rx="2" ry="2"></rect>
+                <line x1="1" y1="10" x2="23" y2="10"></line>
+              </svg>
+            </div>
+            <a href="#transactions" class="navbar-link">Transactions</a>
+          </div>
+        </div>
+
+        <div id="dashboardContent" class="displaySection">
+          <h2 class="displaySectionHeading">Dashboard</h2>
+        </div>
+
+        <div
+          id="productsContent"
+          class="displaySection categoryTable"
+          style="display: none"
+        >
+          <h2 class="displaySectionHeading">Products</h2>
+          <table class="categories">
+            <thead>
+              <tr>
+                <th></th>
+                <th></th>
+                <th>Category</th>
+                <th class="addbtnOperation">
+                  <div>Operation</div>
+                  <div><button id="addRowBtn" class="addRowBtn">+</button></div>
+                </th>
+              </tr>
+            </thead>
+            <tbody class="tableBody"></tbody>
+          </table>
+        </div>
+
+        <div id="ordersContent" class="displaySection" style="display: none">
+          <h2 class="displaySectionHeading">Orders</h2>
+          <div class="tableContent">
+            <table id="orderTable" class="orderTable">
+              <thead>
+                <tr>
+                  <th>Order ID</th>
+                  <th>User Name</th>
+                  <th>Order Date</th>
+                  <th>Total Amount</th>
+                  <th>Order Status</th>
+                  <th>Action</th>
+                </tr>
+              </thead>
+              <tbody id="orderList"></tbody>
+            </table>
+          </div>
+          <div id="orderDetailsModal" class="modal">
+            <div class="modal-content">
+              <span class="close">&times;</span>
+              <h2>Order Details</h2>
+              <div id="orderDetailsContent"></div>
+            </div>
+          </div>
+        </div>
+
+        <div id="customersContent" class="displaySection" style="display: none">
+          <h2 class="displaySectionHeading">Customers</h2>
+        </div>
+
+        <div id="reviewsContent" class="displaySection" style="display: none">
+          <h2 class="displaySectionHeading">Reviews</h2>
+        </div>
+
+        <div
+          id="transactionsContent"
+          class="displaySection"
+          style="display: none"
+        >
+          <h2 class="displaySectionHeading">Transactions</h2>
+        </div>
+
+        <div
+          id="statisticsContent"
+          class="displaySection"
+          style="display: none"
+        >
+          <h2 class="displaySectionHeading">Statistics</h2>
+          <div class="containers">
+            <div class="totalProducts">
+              <div class="img">
+                <svg
+                  id="Layer_1"
+                  data-name="Layer 1"
+                  xmlns="http://www.w3.org/2000/svg"
+                  viewBox="0 0 512 512"
+                >
+                  <defs>
+                    <style>
+                      .cls-1 {
+                        fill: #141f38;
+                      }
+                    </style>
+                  </defs>
+                  <title>cart-glyph</title>
+                  <path
+                    class="cls-1"
+                    d="M142.07,512H369.93a77,77,0,0,0,75.31-61.76l36.29-181.53H30.47L66.76,450.23A77,77,0,0,0,142.07,512ZM307.2,345.54a12.8,12.8,0,1,1,25.6,0v76.83a12.8,12.8,0,1,1-25.6,0Zm-64,0a12.8,12.8,0,1,1,25.6,0v76.83a12.8,12.8,0,1,1-25.6,0Zm-64,0a12.8,12.8,0,1,1,25.6,0v76.83a12.8,12.8,0,1,1-25.6,0Zm288-192.07H427.7L287.18,12.9a44.12,44.12,0,0,0-62.36,0L84.3,153.47H44.8a44.82,44.82,0,0,0,0,89.63H467.2a44.82,44.82,0,0,0,0-89.63Zm-346.7,0L242.92,31a18.52,18.52,0,0,1,26.16,0L391.5,153.47Z"
+                  />
+                </svg>
+              </div>
+              <div class="details">
+                <h2>Total Products</h2>
+                <p class="count productCount"></p>
+              </div>
+            </div>
+            <div class="totalUsers">
+              <div class="img">
+                <svg
+                  id="Layer_1"
+                  data-name="Layer 1"
+                  xmlns="http://www.w3.org/2000/svg"
+                  viewBox="0 0 512 512"
+                >
+                  <defs>
+                    <style>
+                      .cls-1 {
+                        fill: #141f38;
+                      }
+                    </style>
+                  </defs>
+                  <title>user-glyph</title>
+                  <path
+                    class="cls-1"
+                    d="M345.92,317.25,256,371.2l-89.92-54A172.78,172.78,0,0,0,51.2,480a32,32,0,0,0,32,32H428.8a32,32,0,0,0,32-32A172.78,172.78,0,0,0,345.92,317.25Zm-157.44-42.3c1.15.77,2.3,1.47,3.52,2.18V303l64,38.4L320,303V277.12c1.22-.7,2.37-1.41,3.52-2.18a122.75,122.75,0,0,0,25.6-21A127,127,0,0,0,384,166.4V128a128,128,0,0,0-256,0v38.4A127,127,0,0,0,162.88,254,122.75,122.75,0,0,0,188.48,274.94Z"
+                  />
+                </svg>
+              </div>
+              <div class="details">
+                <h2>Total Users</h2>
+                <p class="count userCount"></p>
+              </div>
+            </div>
+            <div class="totalSales">
+              <div class="img">
+                <svg
+                  id="Layer_1"
+                  data-name="Layer 1"
+                  xmlns="http://www.w3.org/2000/svg"
+                  xmlns:xlink="http://www.w3.org/1999/xlink"
+                  viewBox="0 0 512 512"
+                >
+                  <defs>
+                    <linearGradient
+                      id="linear-gradient"
+                      x1="256"
+                      y1="633.8"
+                      x2="256"
+                      y2="-118.22"
+                      gradientUnits="userSpaceOnUse"
+                    >
+                      <stop offset="0" stop-color="#231f20" />
+                      <stop offset="1" stop-color="#58595b" />
+                    </linearGradient>
+                  </defs>
+                  <title>dollar</title>
+                  <path
+                    d="M124.9,334.83h26.39c30.88,0,30.48,4.9,45,29.24C212,390.56,247.77,406.29,286,390c19.4-8.29,33.87-33.69,17.29-63.29-15.91-28.36-52.7-32.39-89.25-41.31-39-9.53-80.75-22.79-100.45-52.69C82.35,185.34,83.09,118.48,147.65,78c26.28-16.49,52.69-26.55,82.76-29.7V20.14C230.41-.81,236.46,0,256.34,0c8.78,0,15.77.18,19.58,3.21s4.41,9,4.41,18.14V49c6.1.67,12.37,1.59,18.84,2.72,53.73,9.51,89.55,30.76,105.69,85.44,8.33,28.2-5.64,33.94-31.33,33.94H334.62c-25,0-29.07-6.05-35.91-28.54-2.75-9-7.13-16-14.71-20.64-31.55-19.19-86.25-3.19-83.78,38.84,1.62,28,40.85,38.63,80.54,50.45C332.38,226.6,386.83,241.24,408.67,290c23.41,52.26,8.89,111.48-49.43,144.46a208.49,208.49,0,0,1-78.92,25.72v29.1c0,21.11-4,22.75-23.53,22.75-21.2,0-26.39,0-26.39-22.75v-28.4a309.8,309.8,0,0,1-39.69-6C137,443.33,110.1,419.75,95.37,368.42,87.26,340.09,97.45,334.83,124.9,334.83Z"
+                    fill-rule="evenodd"
+                    fill="url(#linear-gradient)"
+                  />
+                </svg>
+              </div>
+              <div class="details">
+                <h2>Total Sales</h2>
+                <p class="count countSales">1000</p>
+              </div>
+            </div>
+            <div class="totalOrders">
+              <div class="img">
+                <svg
+                  id="Layer_1"
+                  data-name="Layer 1"
+                  xmlns="http://www.w3.org/2000/svg"
+                  viewBox="0 0 512 512"
+                >
+                  <title>wheel-cart-glyph</title>
+                  <path
+                    d="M430.08,450.56a41,41,0,1,1-41-41A41,41,0,0,1,430.08,450.56Zm-204.8-41a41,41,0,1,0,41,41A41,41,0,0,0,225.28,409.6Zm-81.52-57.42a20.48,20.48,0,0,0,1,3.48c.2.52.49,1,.73,1.48s.51,1.15.84,1.68.72,1,1.08,1.48.62.92,1,1.33.76.73,1.13,1.1.87.91,1.36,1.31c.33.27.71.48,1.06.73a20.56,20.56,0,0,0,1.8,1.22c.34.19.71.32,1.06.49a20.37,20.37,0,0,0,2.08,1c.57.2,1.17.32,1.76.47s1.06.33,1.61.43a20.3,20.3,0,0,0,3.55.31H450.56a20.48,20.48,0,0,0,20.08-16.46l17.19-85.94H126.57Zm363.6-221.8a20.47,20.47,0,0,0-15.84-7.5H139.67L122.48,36.94A20.48,20.48,0,0,0,102.4,20.48H20.48a20.48,20.48,0,0,0,0,41H85.61l32.77,163.84H496l15.58-77.9A20.46,20.46,0,0,0,507.36,130.38Z"
+                  />
+                </svg>
+              </div>
+              <div class="details">
+                <h2>Total Orders</h2>
+                <p class="count orderCount"></p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
       <div class="productDetails hidden"></div>
     </div>
 
@@ -139,6 +448,33 @@
           <button class="editProductDetailForm__cancelBtn">Cancel</button>
         </div>
       </form>
+    </div>
+
+    <div class="profilePage hidden">
+      <div
+        class="close-button"
+        onclick="closeCart()"
+        style="color: black"
+      ></div>
+      <div class="profile_heading">Edit Profile</div>
+      <div class="ProfileUpdateForm">
+        <div class="profilePic">
+          <div class="profileImage"></div>
+        </div>
+        <form id="userForm" class="userForm">
+          <label for="fullName">Full Name:</label>
+          <input type="text" id="fullName" name="fullName" />
+          <label for="username">Username:</label>
+          <input type="text" id="username" name="username" readonly />
+          <label for="email">Email:</label>
+          <input type="email" id="email" name="email" required />
+          <label for="dob">Date of Birth:</label>
+          <input type="date" id="date" name="date" required />
+          <label for="address">Address:</label>
+          <input type="text" id="address" name="address" />
+          <button type="submit">Save Changes</button>
+        </form>
+      </div>
     </div>
 
     <div class="overlay hidden"></div>
