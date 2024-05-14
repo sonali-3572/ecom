@@ -75,6 +75,47 @@ CREATE TABLE IF NOT EXISTS UserDetails (
   FOREIGN KEY (user_id) REFERENCES user(id)
 );
 
+CREATE TABLE IF NOT EXISTS cart (
+    cart_id INT PRIMARY KEY AUTO_INCREMENT,
+    user_id INT,
+    product_id INT,
+    product_quantity INT,
+    FOREIGN KEY (user_id) REFERENCES user(id),
+    FOREIGN KEY (product_id) REFERENCES products(product_id)
+);
+
+CREATE TABLE IF NOT EXISTS orders (
+    order_id INT PRIMARY KEY AUTO_INCREMENT,
+    user_id INT,
+    order_date DATE,
+    total_amount DECIMAL(10, 2),
+    order_status VARCHAR(20),
+    FOREIGN KEY (user_id) REFERENCES user(id)
+);
+
+CREATE TABLE IF NOT EXISTS orderItems (
+    item_id INT PRIMARY KEY AUTO_INCREMENT,
+    order_id INT,
+    user_id INT,
+    product_id INT,
+    quantity INT,
+    unit_price DECIMAL(10, 2),
+    FOREIGN KEY (order_id) REFERENCES orders(order_id),
+    FOREIGN KEY (user_id) REFERENCES user(id),
+    FOREIGN KEY (product_id) REFERENCES products(product_id)
+);
+
+CREATE TABLE IF NOT EXISTS Notifications (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    user_id INT,
+    message TEXT,
+    order_id INT,
+    status ENUM('unread', 'read') DEFAULT 'unread',
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
+
+
+
 **Inserting Sample Data**
 
 You can insert some sample data into the tables using the following SQL queries:
